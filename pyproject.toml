@@ -23,7 +23,7 @@ distribution = false
 [tool.pdm.scripts]
 start = "pdm run start"
 test = "pytest"
-coverage = "pytest --cov=src/trading_bot" # Target the source code for coverage
+coverage = "pytest --cov=src/trading_bot_mvp --cov-report=lcov --cov-report=json" # Target the source code for coverage
 # Lints both the source and test directories, with auto-fix enabled
 lint = "ruff check src tests --fix"
 # Formats both the source and test directories

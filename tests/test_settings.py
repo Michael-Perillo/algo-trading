@@ -29,9 +29,9 @@ def test_settings_default_base_url(env_api_keys, monkeypatch):
     settings = Settings()
     assert settings.BASE_URL == "https://paper-api.alpaca.markets"
 
-# @pytest.mark.usefixtures("monkeypatch")
-# def test_settings_missing_required(monkeypatch):
-#     monkeypatch.delenv("API_KEY", raising=False)
-#     monkeypatch.delenv("SECRET_KEY", raising=False)
-#     with pytest.raises(ValidationError):
-#         Settings()
+@pytest.mark.usefixtures("monkeypatch")
+def test_settings_missing_required(monkeypatch):
+    monkeypatch.delenv("API_KEY", raising=False)
+    monkeypatch.delenv("SECRET_KEY", raising=False)
+    with pytest.raises(ValidationError):
+        Settings()

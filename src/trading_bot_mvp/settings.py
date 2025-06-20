@@ -17,4 +17,5 @@ class Settings(BaseSettings):
     BASE_URL: str = "https://paper-api.alpaca.markets"
 
 # Create a single, importable instance of the settings
-settings = Settings()
+def get_settings():
+    return Settings()
