@@ -1,0 +1,63 @@
+[project]
+name = "algo-trading"
+version = "0.1.0"
+description = "Default template for PDM package"
+authors = [
+    {name = "Michael-Perillo", email = "michael@perillo.me"},
+]
+dependencies = ["pydantic>=2.11.7", "pydantic-settings>=2.9.1"]
+requires-python = "==3.13.*"
+readme = "README.md"
+license = {text = "MIT"}
+
+[project.packages]
+include = ["trading_bot_mvp"]
+from = "src"
+
+[project.scripts]
+start = "trading_bot.main:main"
+
+[tool.pdm]
+distribution = false
+
+[tool.pdm.scripts]
+start = "pdm run start"
+test = "pytest"
+coverage = "pytest --cov=src/trading_bot" # Target the source code for coverage
+# Lints both the source and test directories, with auto-fix enabled
+lint = "ruff check src tests --fix"
+# Formats both the source and test directories
+format = "ruff format src tests"
+# Type checks both the source and test directories
+typecheck = "mypy src tests"
+
+[tool.mypy]
+python_version = "3.13"
+
+# Easiest way: just enable strict mode
+strict = true
+
+[tool.ruff.lint]
+# Select the rule codes to enforce.
+# "E" and "F" are Pyflakes/Pycodestyle errors (essential).
+# "W" are warnings.
+# "I" is for isort (import sorting).
+# "UP" is for pyupgrade (modernizing syntax).
+# "ANN" is for type annotations.
+select = ["E", "F", "W", "I", "UP", "ANN"]
+
+# Ignore certain errors if needed (e.g., a specific print statement)
+# ignore = ["E501"]
+
+[tool.ruff.format]
+# Use single quotes for strings
+quote-style = "single"
+
+[dependency-groups]
+dev = [
+    "ruff>=0.12.0",
+    "mypy>=1.16.1",
+    "pytest>=8.4.1",
+    "pytest-cov>=6.2.1",
+    "pytest-mock>=3.14.1",
+]
