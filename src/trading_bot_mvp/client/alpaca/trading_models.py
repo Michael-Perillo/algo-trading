@@ -16,12 +16,14 @@ class OptionsApprovedLevel(Enum):
     integer_0 = 0
     integer_1 = 1
     integer_2 = 2
+    integer_3 = 3
 
 
 class OptionsTradingLevel(Enum):
     integer_0 = 0
     integer_1 = 1
     integer_2 = 2
+    integer_3 = 3
 
 
 class AccountStatus(Enum):

@@ -34,6 +34,23 @@ class AlpacaAPIClient(BaseAPIClient):
         )
         return self.request(req)
 
+class AlpacaDataClient(BaseAPIClient):
+    """
+    Concrete implementation of BaseAPIClient for Alpaca's Data API.
+    This client is used for fetching market data.
+    """
+    def __init__(self, base_url: Optional[str] = None, headers: Optional[Dict[str, Any]] = None):
+        if base_url is not None and headers is not None:
+            super().__init__(base_url, headers)
+            return
+        settings = get_settings()
+        headers = {
+            "APCA-API-KEY-ID": settings.API_KEY,
+            "APCA-API-SECRET-KEY": settings.SECRET_KEY,
+            "Content-Type": "application/json",
+        }
+        super().__init__(settings.DATA_BASE_URL, headers)
+
     def get_bars(self, symbols: str, start: str = None, end: str = None, timeframe: str = None, limit: int = None, page_token: str = None, adjustment: str = None, feed: str = None):
         """
         Get Bar data for multiple stock symbols using the /v2/stocks/bars endpoint.
@@ -66,3 +83,4 @@ class AlpacaAPIClient(BaseAPIClient):
             params["feed"] = feed
         req = APIRequest(method="GET", endpoint="/v2/stocks/bars", params=params)
         return self.request(req)
+

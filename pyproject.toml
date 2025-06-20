@@ -14,14 +14,11 @@ license = {text = "MIT"}
 include = ["trading_bot_mvp"]
 from = "src"
 
-[project.scripts]
-start = "trading_bot_mvp.main:main"
-
 [tool.pdm]
 distribution = false
 
 [tool.pdm.scripts]
-start = "pdm run start"
+start = { cmd = "python src/trading_bot_mvp/main.py", env = { PYTHONPATH = "src" } }
 test = "pytest"
 coverage = "pytest --cov=src/trading_bot_mvp --cov-report=lcov --cov-report=json" # Target the source code for coverage
 # Lints both the source and test directories, with auto-fix enabled

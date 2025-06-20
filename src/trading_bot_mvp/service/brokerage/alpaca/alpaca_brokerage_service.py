@@ -1,7 +1,7 @@
 import pandas as pd
 from trading_bot_mvp.client.alpaca.data_models import StockBarsResp
 from trading_bot_mvp.service.base_service import BaseService
-from trading_bot_mvp.client.alpaca.alpaca_client import AlpacaAPIClient
+from trading_bot_mvp.client.alpaca.alpaca_client import AlpacaAPIClient, AlpacaDataClient
 from trading_bot_mvp.client.alpaca.trading_models import Account as AlpacaAccountResponseBody
 from trading_bot_mvp.shared.model import Account
 from trading_bot_mvp.shared.model import BarRequest
@@ -10,9 +10,11 @@ import trading_bot_mvp.service.brokerage.alpaca.api_field_mappings.model as alpa
 
 class AlpacaBrokerageService(BaseService):
     api_client: AlpacaAPIClient
+    data_client: AlpacaDataClient
 
     def __init__(self, api_client: AlpacaAPIClient):
         super().__init__(api_client)
+        self.data_client = AlpacaDataClient()
 
     def get_account(self) -> Account:
         response = self.api_client.get_account()
@@ -25,7 +27,7 @@ class AlpacaBrokerageService(BaseService):
         :param request: BarRequest containing parameters for fetching bars.
         :return: DataFrame of bar data with symbol column.
         """
-        response = self.api_client.get_bars(request.symbol, request.start, request.end, request.timeframe.value)
+        response = self.data_client.get_bars(request.symbol, request.start, request.end, request.timeframe.value)
         bars_response_body = StockBarsResp(**response.json())
         # Handle non-flat bars response: bars is a dict keyed by symbol
         bars_dict = bars_response_body.bars

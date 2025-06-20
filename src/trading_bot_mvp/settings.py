@@ -16,6 +16,9 @@ class Settings(BaseSettings):
     # --- Broker Configuration ---
     BASE_URL: str = "https://paper-api.alpaca.markets"
 
+    # --- Data Configuration ---
+    DATA_BASE_URL: str = "https://data.alpaca.markets"
+
 # Create a single, importable instance of the settings
 def get_settings():
     return Settings()
