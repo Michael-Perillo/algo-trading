@@ -1,0 +1,190 @@
+openapi: 3.0.0
+info:
+  title: Common Brokerage API Models
+  version: 1.0.0
+  description: |
+    Common models for interacting with brokerage APIs in an agnostic way. These models are designed to be mapped to specific broker implementations (e.g., Alpaca, Interactive Brokers, etc.) and can be used at the service or application layer.
+
+components:
+  schemas:
+    Account:
+      type: object
+      description: Generic brokerage account information
+      properties:
+        id:
+          type: string
+          description: Unique account identifier
+        status:
+          type: string
+          description: Account status (e.g., ACTIVE, SUSPENDED, CLOSED)
+        currency:
+          type: string
+          description: Account currency (e.g., USD)
+        cash:
+          type: number
+          description: Cash balance
+        equity:
+          type: number
+          description: Total equity value
+        buying_power:
+          type: number
+          description: Buying power available
+        created_at:
+          type: string
+          format: date-time
+          description: Account creation timestamp
+      required:
+        - id
+        - status
+        - currency
+        - cash
+        - equity
+        - buying_power
+
+    FieldMap:
+      type: object
+      description: Generic mapping from common model fields to brokerage-specific fields
+      properties:
+        mapping:
+          type: object
+          additionalProperties:
+            type: string
+          description: |
+            Dictionary where keys are common model field names and values are the corresponding brokerage API field names.
+      required:
+        - mapping
+
+    Order:
+      type: object
+      description: Generic order model
+      properties:
+        id:
+          type: string
+          description: Unique order identifier
+        symbol:
+          type: string
+          description: Ticker symbol
+        side:
+          type: string
+          enum: [buy, sell]
+        type:
+          type: string
+          enum: [market, limit, stop, stop_limit, trailing_stop]
+        qty:
+          type: number
+          description: Quantity of asset to trade
+        filled_qty:
+          type: number
+          description: Quantity filled
+        status:
+          type: string
+          description: Order status (e.g., new, filled, canceled)
+        price:
+          type: number
+          description: Price per share (for limit/stop orders)
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+      required:
+        - id
+        - symbol
+        - side
+        - type
+        - qty
+        - status
+
+    Position:
+      type: object
+      description: Generic open position model
+      properties:
+        symbol:
+          type: string
+        qty:
+          type: number
+        avg_entry_price:
+          type: number
+        market_value:
+          type: number
+        unrealized_pl:
+          type: number
+        side:
+          type: string
+          enum: [long, short]
+      required:
+        - symbol
+        - qty
+        - avg_entry_price
+        - market_value
+        - unrealized_pl
+        - side
+
+    Bar:
+      type: object
+      description: OHLCV bar for a symbol
+      properties:
+        t:
+          type: string
+          format: date-time
+        o:
+          type: number
+        h:
+          type: number
+        l:
+          type: number
+        c:
+          type: number
+        v:
+          type: number
+      required:
+        - t
+        - o
+        - h
+        - l
+        - c
+        - v
+
+    Trade:
+      type: object
+      description: Trade print for a symbol
+      properties:
+        t:
+          type: string
+          format: date-time
+        p:
+          type: number
+        s:
+          type: number
+        i:
+          type: string
+          description: Trade ID
+      required:
+        - t
+        - p
+        - s
+        - i
+
+    BarRequest:
+      type: object
+      description: Request parameters for fetching OHLCV bars
+      properties:
+        symbol:
+          type: string
+          description: Ticker symbol
+        timeframe:
+          type: string
+          enum: [1m, 5m, 15m, 30m, 1h, 4h, 1d]
+          description: Timeframe for the bars
+        start:
+          type: string
+          format: date-time
+          description: Start time for the bar data
+        end:
+          type: string
+          format: date-time
+          description: End time for the bar data
+      required:
+        - symbol
+        - timeframe
