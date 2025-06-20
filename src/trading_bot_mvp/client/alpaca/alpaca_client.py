@@ -10,8 +10,11 @@ class AlpacaAPIClient(BaseAPIClient):
     Concrete implementation of BaseAPIClient for Alpaca's Data and Trading APIs.
     This client parametrizes requests using APIRequest and can be used for both trading_spec and data_spec endpoints.
     """
-    def __init__(self):
+    def __init__(self, base_url: Optional[str] = None, headers: Optional[Dict[str, Any]] = None):
         # todo break settings out into separate configs for different apis
+        if base_url is not None and headers is not None:
+            super().__init__(base_url, headers)
+            return
         settings = get_settings()
         headers = {
             "APCA-API-KEY-ID": settings.API_KEY,

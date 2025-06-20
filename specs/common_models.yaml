@@ -12,8 +12,11 @@ components:
       description: Generic brokerage account information
       properties:
         id:
-          type: string
-          description: Unique account identifier
+          oneOf:
+            - type: string
+            - type: string
+              format: uuid
+          description: Unique account identifier (string or UUID)
         status:
           type: string
           description: Account status (e.g., ACTIVE, SUSPENDED, CLOSED)

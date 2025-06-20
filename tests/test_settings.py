@@ -1,6 +1,18 @@
 import pytest
 from pydantic import ValidationError
-from trading_bot_mvp.settings import get_settings
+from trading_bot_mvp.settings import Settings
+from pydantic_settings import SettingsConfigDict
+
+
+class SettingsForTest(Settings):
+    model_config = SettingsConfigDict(env_file=None)
+
+def get_settings():
+    """
+    Returns an instance of the Settings class.
+    This function can be used to override the default settings for testing purposes.
+    """
+    return SettingsForTest()
 
 @pytest.fixture
 def env_api_keys(monkeypatch):
@@ -17,6 +29,7 @@ def env_base_url(monkeypatch):
     monkeypatch.delenv("BASE_URL", raising=False)
 
 
+@pytest.mark.usefixtures("monkeypatch")
 def test_settings_loads_env(env_api_keys, env_base_url):
     settings = get_settings()
     assert settings.API_KEY == "test_api_key"
