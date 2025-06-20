@@ -53,6 +53,9 @@ select = ["E", "F", "W", "I", "UP", "ANN"]
 # Use single quotes for strings
 quote-style = "single"
 
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+
 [dependency-groups]
 dev = [
     "ruff>=0.12.0",
