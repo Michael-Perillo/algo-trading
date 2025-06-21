@@ -1,6 +1,6 @@
 from abc import ABC
 from trading_bot_mvp.client.base_client import BaseAPIClient
-from typing import Type, Dict, Any, TypeVar
+from typing import Type, Dict, Any, TypeVar, Optional
 from pydantic import BaseModel
 
 from trading_bot_mvp.shared.model import FieldMap
@@ -13,7 +13,7 @@ class BaseService(ABC):
     Base service class that uses an API client to interact with an external API.
     Subclasses should implement domain-specific logic and response parsing.
     """
-    def __init__(self, api_client: BaseAPIClient):
+    def __init__(self, api_client: Optional[BaseAPIClient] = None):
         self.api_client = api_client
 
     @staticmethod

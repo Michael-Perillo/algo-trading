@@ -100,7 +100,7 @@ class Timeframe(Enum):
     field_30m = '30m'
     field_1h = '1h'
     field_4h = '4h'
-    field_1d = '1d'
+    field_1d = '1D'
 
 
 class BarRequest(BaseModel):

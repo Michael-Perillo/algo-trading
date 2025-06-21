@@ -5,7 +5,7 @@ description = "Default template for PDM package"
 authors = [
     {name = "Michael-Perillo", email = "michael@perillo.me"},
 ]
-dependencies = ["pydantic>=2.11.7", "pydantic-settings>=2.9.1", "pandas>=2.3.0", "alpaca-trade-api>=3.2.0", "httpx>=0.28.1"]
+dependencies = ["pydantic>=2.11.7", "pydantic-settings>=2.9.1", "pandas>=2.3.0", "alpaca-trade-api>=3.2.0", "httpx>=0.28.1", "pandera>=0.24.0"]
 requires-python = "==3.13.*"
 readme = "README.md"
 license = {text = "MIT"}
@@ -31,8 +31,8 @@ generate_models = "./scripts/generate_alpaca_models.sh"
 
 [tool.mypy]
 python_version = "3.13"
-
-# Easiest way: just enable strict mode
+plugins = ["pandera.mypy"]
+# enable strict mode
 strict = true
 
 [tool.ruff.lint]

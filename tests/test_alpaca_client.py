@@ -1,8 +1,8 @@
 import pytest
-from trading_bot_mvp.client.alpaca.alpaca_client import AlpacaAPIClient
+from trading_bot_mvp.client.alpaca.alpaca_client import AlpacaAPIClient, AlpacaDataClient
 from trading_bot_mvp.client.base_client import APIRequest
 
-class DummyAlpacaAPIClient(AlpacaAPIClient):
+class DummyAlpacaAPIClient(AlpacaDataClient):
     def __init__(self):
         super().__init__(base_url="https://example.com", headers={})
         self.last_request = None

@@ -14,7 +14,7 @@ class AccountFieldMap(FieldMap):
         "id": "id",
         "status": "status",
         "currency": "currency",
-        "cash": "cash",  # fixed: map 'cash' to 'cash'
+        "cash": "cash",
         "equity": "equity",
         "buying_power": "buying_power",
         "created_at": "created_at",

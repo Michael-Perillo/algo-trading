@@ -1,6 +1,7 @@
 from trading_bot_mvp.client.base_client import BaseAPIClient, APIRequest
 from typing import Optional, Dict, Any
 from httpx import Response
+import datetime as dt
 
 from trading_bot_mvp.settings import get_settings
 
@@ -51,28 +52,38 @@ class AlpacaDataClient(BaseAPIClient):
         }
         super().__init__(settings.DATA_BASE_URL, headers)
 
-    def get_bars(self, symbols: str, start: str = None, end: str = None, timeframe: str = None, limit: int = None, page_token: str = None, adjustment: str = None, feed: str = None):
+    def get_bars(self, symbols: str, timeframe: str, start: dt.datetime = None, end: dt.datetime = None, limit: int = None,
+                 page_token: str = None, adjustment: str = None, feed: str = None, as_of: dt.datetime = None, sort: str = None) -> Response:
         """
         Get Bar data for multiple stock symbols using the /v2/stocks/bars endpoint.
         Parameters:
             symbols (str): Comma-separated list of stock symbols (e.g., 'AAPL,TSLA')
+            timeframe (str): Timeframe for the aggregation (e.g., '1Min', '1Hour', '1Day')
             start (str): Filter data equal to or after this time (RFC-3339 format)
             end (str): Filter data equal to or before this time (RFC-3339 format)
-            timeframe (str): Timeframe for the aggregation (e.g., '1Min', '1Hour', '1Day')
             limit (int): Number of data points to return
             page_token (str): Pagination token
             adjustment (str): Corporate action adjustment(s) for bars data
             feed (str): Which feed to pull market data from (iex, otc, sip)
+            as_of (dt.datetime): Get bars as of a specific time (RFC-3339 format)
+            sort (str): Sort order for the results ('asc' or 'desc')
         Returns:
             httpx.Response: The raw HTTP response from Alpaca
         """
-        params = {"symbols": symbols}
+        if not symbols:
+            raise ValueError("Symbols parameter cannot be empty")
+        if not timeframe:
+            raise ValueError("Timeframe parameter cannot be empty")
+
+        params = {"symbols": symbols, "timeframe": timeframe}
+
         if start is not None:
-            params["start"] = start
+            # format start and end to YYYY-MM-DD if they are not None
+            start_str = start.strftime('%Y-%m-%d') if isinstance(start, dt.datetime) else start
+            params["start"] = start_str
         if end is not None:
-            params["end"] = end
-        if timeframe is not None:
-            params["timeframe"] = timeframe
+            end_str = end.strftime('%Y-%m-%d') if isinstance(end, dt.datetime) else end
+            params["end"] = end_str
         if limit is not None:
             params["limit"] = limit
         if page_token is not None:
@@ -81,6 +92,10 @@ class AlpacaDataClient(BaseAPIClient):
             params["adjustment"] = adjustment
         if feed is not None:
             params["feed"] = feed
+        if as_of is not None:
+            params["as_of"] = as_of.isoformat() if isinstance(as_of, dt.datetime) else as_of
+        if sort is not None:
+            params["sort"] = sort
         req = APIRequest(method="GET", endpoint="/v2/stocks/bars", params=params)
         return self.request(req)
 
