@@ -10,6 +10,7 @@ class BaseBrokerageService(BaseService, ABC):
     """
     Abstract base brokerage service class for interacting with a brokerage. Optionally takes a baseAPIclient for API interaction.
     """
+
     def __init__(self, api_client: Optional[BaseAPIClient] = None) -> None:
         self.api_client = api_client
 

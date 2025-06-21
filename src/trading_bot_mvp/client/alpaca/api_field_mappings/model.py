@@ -10,12 +10,15 @@ class AccountFieldMap(FieldMap):
     Strongly-typed mapping from Alpaca account fields to common account model fields.
     The keys are the common model field names, and the values are the Alpaca API field names.
     """
-    mapping: Dict[str, str] = Field(default_factory=lambda: {
-        "id": "id",
-        "status": "status",
-        "currency": "currency",
-        "cash": "cash",
-        "equity": "equity",
-        "buying_power": "buying_power",
-        "created_at": "created_at",
-    })
+
+    mapping: Dict[str, str] = Field(
+        default_factory=lambda: {
+            'id': 'id',
+            'status': 'status',
+            'currency': 'currency',
+            'cash': 'cash',
+            'equity': 'equity',
+            'buying_power': 'buying_power',
+            'created_at': 'created_at',
+        }
+    )

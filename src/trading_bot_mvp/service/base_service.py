@@ -13,11 +13,16 @@ class BaseService(ABC):
     Base service class that uses an API client to interact with an external API.
     Subclasses should implement domain-specific logic and response parsing.
     """
+
     def __init__(self, api_client: Optional[BaseAPIClient] = None):
         self.api_client = api_client
 
     @staticmethod
-    def map_model(source: BaseModel, target_model: Type[GenericBaseModel], field_map: FieldMap = None) -> GenericBaseModel:
+    def map_model(
+        source: BaseModel,
+        target_model: Type[GenericBaseModel],
+        field_map: FieldMap = None,
+    ) -> GenericBaseModel:
         """
         Map fields from a source Pydantic model to a target Pydantic model, optionally renaming fields using a FieldMap.
         Main use case is to convert between different API response models or DTOs (Data Transfer Objects).
