@@ -1,0 +1,29 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "PDM: Run App",
+            "type": "debugpy",
+            "request": "launch",
+            "module": "pdm",
+            "args": ["run", "start"],
+            "console": "integratedTerminal"
+        },
+        {
+            "name": "PDM: Test",
+            "type": "debugpy",
+            "request": "launch",
+            "module": "pdm",
+            "args": ["run", "test"],
+            "console": "integratedTerminal"
+        },
+        {
+            "name": "PDM: Coverage",
+            "type": "debugpy",
+            "request": "launch",
+            "module": "pdm",
+            "args": ["run", "coverage"],
+            "console": "integratedTerminal"
+        }
+    ]
+}
