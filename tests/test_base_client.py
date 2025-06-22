@@ -1,3 +1,4 @@
+from typing import Any
 from unittest.mock import Mock
 
 import httpx
@@ -7,12 +8,12 @@ from trading_bot_mvp.client.base_client import APIRequest, BaseAPIClient
 
 
 class DummyAPIClient(BaseAPIClient):
-    def __init__(self) -> None:
+    def __init__(self, mock_json: dict[str, Any] | None = {'result': 'ok'}) -> None:
         mock_client = Mock(spec=httpx.Client)
         dummy_request = Request('GET', 'https://example.com/test')
         mock_response = Response(
             status_code=200,
-            json={'result': 'ok'},
+            json=mock_json,
             headers={'Content-Type': 'application/json'},
             request=dummy_request,
         )

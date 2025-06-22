@@ -3,6 +3,9 @@ from trading_bot_mvp.client.alpaca.alpaca_client import AlpacaAPIClient
 from trading_bot_mvp.client.alpaca.trading_models import (
     Account as AlpacaAccountResponseBody,
 )
+from trading_bot_mvp.client.alpaca.trading_models import (
+    Position as AlpacaPositionResponseBody,
+)
 from trading_bot_mvp.service.brokerage.base_brokerage_service import (
     BaseBrokerageService,
 )
@@ -33,12 +36,20 @@ class AlpacaBrokerageService(BaseBrokerageService):
         """
         response = self.api_client.get_open_positions(symbol=symbol)
         if symbol:
+            # If a symbol is provided, we expect a single position response
+            position_response_body = AlpacaPositionResponseBody(**response.json())
             positions = [
-                self.map_model(response.json(), Position, alpaca_field_mappings.PositionFieldMap())
+                self.map_model(
+                    position_response_body, Position, alpaca_field_mappings.PositionFieldMap()
+                )
             ]
         else:
             positions = [
-                self.map_model(position, Position, alpaca_field_mappings.PositionFieldMap())
+                self.map_model(
+                    AlpacaPositionResponseBody(**position),
+                    Position,
+                    alpaca_field_mappings.PositionFieldMap(),
+                )
                 for position in response.json()
             ]
         return positions
@@ -50,4 +61,6 @@ class AlpacaBrokerageService(BaseBrokerageService):
         :param order_request: The order request to be placed.
         :return: Generic order response.
         """
+        # response = self.api_client.place_order(order_request)
+        # order_response_body = AlpacaOrderResponseBody(**response.json())
         return OrderResponse(symbol=order_request.symbol)

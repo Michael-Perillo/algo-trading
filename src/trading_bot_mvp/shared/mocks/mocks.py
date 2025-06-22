@@ -86,3 +86,83 @@ class DummyAPIClient(AlpacaAPIClient):
                 'next_page_token': None,
             },
         )
+
+    def get_open_positions(self, symbol: str | None = None) -> Response:
+        if symbol:
+            # Return a single position dict
+            return Response(
+                status_code=200,
+                headers={'Content-Type': 'application/json'},
+                json={
+                    'asset_id': '26201567-9303-4df5-8f8f-a4727d1053a4',
+                    'symbol': 'AAPL',
+                    'exchange': 'NYSE',
+                    'asset_class': 'us_equity',
+                    'qty': '10',
+                    'qty_available': '10',
+                    'side': 'long',
+                    'avg_entry_price': '100.0',
+                    'market_value': '1000.0',
+                    'cost_basis': '1000.0',
+                    'unrealized_pl': '0.0',
+                    'unrealized_plpc': '0.0',
+                    'unrealized_intraday_pl': '0.0',
+                    'unrealized_intraday_plpc': '0.0',
+                    'current_price': '100.0',
+                    'lastday_price': '99.0',
+                    'change_today': '0.01',
+                    'asset_marginable': True,
+                },
+            )
+        else:
+            # Return a list of positions
+            # json should be a list of position dicts
+            mock_positions = [
+                {
+                    'asset_id': '26201567-9303-4df5-8f8f-a4727d1053a4',
+                    'symbol': 'AAPL',
+                    'exchange': 'NYSE',
+                    'asset_class': 'us_equity',
+                    'qty': '10',
+                    'qty_available': '10',
+                    'side': 'long',
+                    'avg_entry_price': '100.0',
+                    'market_value': '1000.0',
+                    'cost_basis': '1000.0',
+                    'unrealized_pl': '0.0',
+                    'unrealized_plpc': '0.0',
+                    'unrealized_intraday_pl': '0.0',
+                    'unrealized_intraday_plpc': '0.0',
+                    'current_price': '100.0',
+                    'lastday_price': '99.0',
+                    'change_today': '0.01',
+                    'asset_marginable': True,
+                },
+                {
+                    'asset_id': '26201567-9303-4df5-8f8f-a4727d1053a4',
+                    'symbol': 'MSFT',
+                    'exchange': 'NASDAQ',
+                    'asset_class': 'us_equity',
+                    'qty': '5',
+                    'qty_available': '5',
+                    'side': 'long',
+                    'avg_entry_price': '200.0',
+                    'market_value': '1000.0',
+                    'cost_basis': '1000.0',
+                    'unrealized_pl': '0.0',
+                    'unrealized_plpc': '0.0',
+                    'unrealized_intraday_pl': '0.0',
+                    'unrealized_intraday_plpc': '0.0',
+                    'current_price': '200.0',
+                    'lastday_price': '198.0',
+                    'change_today': '0.01',
+                    'asset_marginable': True,
+                },
+            ]
+            # the response body is a list of objects
+            # use the list of dicts as the json response
+            return Response(
+                status_code=200,
+                headers={'Content-Type': 'application/json'},
+                json=mock_positions,
+            )

@@ -22,4 +22,11 @@ repos:
         pass_filenames: false
         always_run: true
         require_serial: true
+      - id: test-coverage
+        name: pytest test coverage
+        entry: pdm run coverage
+        language: system
+        pass_filenames: false
+        always_run: true
+        require_serial: true
 

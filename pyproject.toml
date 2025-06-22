@@ -24,6 +24,7 @@ exclude = [
     "src/trading_bot_mvp/client/alpaca/trading_models",
     "src/trading_bot_mvp/client/alpaca/data_models"
 ]
+mypy_path = "src"
 
 [[tool.mypy.overrides]]
 module = [
@@ -63,7 +64,7 @@ distribution = false
 [tool.pdm.scripts]
 start = { cmd = "python src/trading_bot_mvp/main.py", env = { PYTHONPATH = "src" } }
 test = "pytest"
-coverage = "pytest --cov=src/trading_bot_mvp --cov-report=lcov --cov-report=json" # Target the source code for coverage
+coverage = "pytest --cov=src/trading_bot_mvp --cov-report=lcov --cov-report=json --cov-fail-under=80" # Target the source code for coverage
 # Lints both the source and test directories, with auto-fix enabled
 lint = "ruff check src tests --fix"
 # Formats both the source and test directories
