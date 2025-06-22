@@ -57,72 +57,137 @@ components:
       required:
         - mapping
 
-    Order:
+    OrderSide:
+      type: string
+      description: Side of the order
+      enum: [buy, sell]
+
+    OrderType:
+      type: string
+      description: Type of the order
+      enum: [market, limit, stop, stop_limit, trailing_stop]
+
+    TimeInForce:
+      type: string
+      description: Time in force for the order
+      enum: [day, gtc, opg, cls, ioc, fok]
+
+    OrderClass:
+      type: string
+      description: Order class
+      enum: [simple, bracket, oto, oco]
+
+    OrderRequest:
       type: object
-      description: Generic order model
+      description: High-level metadata describing an order request, to be processed by a brokerage API.
       properties:
-        id:
-          type: string
-          description: Unique order identifier
         symbol:
           type: string
-          description: Ticker symbol
+          description: Ticker symbol for the asset to trade
         side:
-          type: string
-          enum: [buy, sell]
+          $ref: '#/components/schemas/OrderSide'
         type:
-          type: string
-          enum: [market, limit, stop, stop_limit, trailing_stop]
+          $ref: '#/components/schemas/OrderType'
         qty:
           type: number
           description: Quantity of asset to trade
-        filled_qty:
+        time_in_force:
+          $ref: '#/components/schemas/TimeInForce'
+        order_class:
+          $ref: '#/components/schemas/OrderClass'
+        limit_price:
           type: number
-          description: Quantity filled
-        status:
-          type: string
-          description: Order status (e.g., new, filled, canceled)
-        price:
+          description: Limit price for limit or take-profit orders
+        stop_price:
           type: number
-          description: Price per share (for limit/stop orders)
-        created_at:
+          description: Stop price for stop or stop-loss orders
+        take_profit_price:
+          type: number
+          description: Take profit price for bracket orders
+        stop_loss_price:
+          type: number
+          description: Stop loss price for bracket orders
+        client_order_id:
           type: string
-          format: date-time
-        updated_at:
-          type: string
-          format: date-time
+          description: Optional client-provided order identifier
+        metadata:
+          type: object
+          additionalProperties: true
+          description: Arbitrary metadata for the order request
       required:
-        - id
         - symbol
         - side
         - type
         - qty
-        - status
 
     Position:
       type: object
-      description: Generic open position model
+      description: Generic open position model, broker-agnostic.
       properties:
+        vendor_asset_id:
+          type: string
+          format: uuid
+          description: Unique asset identifier
         symbol:
           type: string
+          description: Ticker symbol
+        exchange:
+          type: string
+          description: Exchange where the asset is traded
+        asset_class:
+          type: string
+          description: Asset class (e.g., us_equity)
         qty:
           type: number
-        avg_entry_price:
+          description: Quantity held
+        qty_available:
           type: number
-        market_value:
-          type: number
-        unrealized_pl:
-          type: number
+          description: Quantity available to trade
         side:
           type: string
           enum: [long, short]
+          description: Position side
+        avg_entry_price:
+          type: number
+          description: Average entry price
+        market_value:
+          type: number
+          description: Current market value of the position
+        cost_basis:
+          type: number
+          description: Cost basis of the position
+        unrealized_pl:
+          type: number
+          description: Unrealized profit/loss
+        unrealized_plpc:
+          type: number
+          description: Unrealized profit/loss percent (decimal, e.g., 0.05 for 5%)
+        unrealized_intraday_pl:
+          type: number
+          description: Unrealized intraday profit/loss
+        unrealized_intraday_plpc:
+          type: number
+          description: Unrealized intraday profit/loss percent
+        current_price:
+          type: number
+          description: Current price of the asset
+        lastday_price:
+          type: number
+          description: Previous day's closing price
+        change_today:
+          type: number
+          description: Percent change from previous close (decimal, e.g., -0.01 for -1%)
+        asset_marginable:
+          type: boolean
+          description: Whether the asset is marginable
       required:
+        - asset_id
         - symbol
         - qty
+        - side
         - avg_entry_price
         - market_value
         - unrealized_pl
-        - side
 
     Bar:
       type: object

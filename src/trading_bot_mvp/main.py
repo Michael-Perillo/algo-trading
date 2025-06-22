@@ -21,7 +21,7 @@ if __name__ == '__main__':
     # todo fix the request issue with start and end dates
     bar_request = BarRequest(
         symbol='AAPL',
-        timeframe=Timeframe.field_1d,
+        timeframe=Timeframe.field_1D,
         start=pd.to_datetime('2023-01-01'),
         end=pd.to_datetime('2023-02-01'),
     )

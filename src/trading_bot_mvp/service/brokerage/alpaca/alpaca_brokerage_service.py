@@ -6,7 +6,7 @@ from trading_bot_mvp.client.alpaca.trading_models import (
 from trading_bot_mvp.service.brokerage.base_brokerage_service import (
     BaseBrokerageService,
 )
-from trading_bot_mvp.shared.model import Account
+from trading_bot_mvp.shared.model import Account, OrderRequest, OrderResponse, Position
 
 
 class AlpacaBrokerageService(BaseBrokerageService):
@@ -24,3 +24,30 @@ class AlpacaBrokerageService(BaseBrokerageService):
         return self.map_model(
             account_response_body, Account, alpaca_field_mappings.AccountFieldMap()
         )
+
+    def get_open_positions(self, symbol: str | None = None) -> list[Position]:
+        """
+        Fetch open positions from Alpaca.
+        :param symbol: Optional symbol to filter positions by.
+        :return: List of open positions.
+        """
+        response = self.api_client.get_open_positions(symbol=symbol)
+        if symbol:
+            positions = [
+                self.map_model(response.json(), Position, alpaca_field_mappings.PositionFieldMap())
+            ]
+        else:
+            positions = [
+                self.map_model(position, Position, alpaca_field_mappings.PositionFieldMap())
+                for position in response.json()
+            ]
+        return positions
+
+    def place_order(self, order_request: OrderRequest) -> OrderResponse:
+        # todo implement order response model
+        """
+        Place an order using the Alpaca API.
+        :param order_request: The order request to be placed.
+        :return: Generic order response.
+        """
+        return OrderResponse(symbol=order_request.symbol)

@@ -2736,13 +2736,13 @@
             "type": "integer",
             "example": 2,
             "description": "The options trading level that was approved for this account.\n0=disabled, 1=Covered Call/Cash-Secured Put, 2=Long Call/Put.\n",
-            "enum": [0, 1, 2]
+            "enum": [0, 1, 2, 3]
           },
           "options_trading_level": {
             "type": "integer",
             "example": 2,
             "description": "The effective options trading level of the account.\nThis is the minimum between account options_approved_level and account configurations max_options_trading_level.\n0=disabled, 1=Covered Call/Cash-Secured Put, 2=Long Call/Put.\n",
-            "enum": [0, 1, 2]
+            "enum": [0, 1, 2, 3]
           },
           "intraday_adjustments": {
             "type": "string",
@@ -2825,7 +2825,7 @@
           "max_options_trading_level": {
             "type": "integer",
             "description": "The desired maximum options trading level. 0=disabled, 1=Covered Call/Cash-Secured Put, 2=Long Call/Put.",
-            "enum": [0, 1, 2]
+            "enum": [0, 1, 2, 3]
           },
           "pdt_check": {
             "type": "string",

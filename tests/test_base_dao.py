@@ -53,7 +53,7 @@ class DummyDAO(BaseDAO):
         return self.standardize_bars_dataframe(raw_df, standard_mapping)
 
 
-bar_request = BarRequest(symbol='AAPL', timeframe=Timeframe.field_1d, start=None, end=None)
+bar_request = BarRequest(symbol='AAPL', timeframe=Timeframe.field_1D, start=None, end=None)
 
 
 def test_standardize_bars_dataframe() -> None:

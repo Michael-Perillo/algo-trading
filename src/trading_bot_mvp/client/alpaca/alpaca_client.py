@@ -5,6 +5,7 @@ from httpx import Response
 
 from trading_bot_mvp.client.base_client import APIRequest, BaseAPIClient
 from trading_bot_mvp.settings import get_settings
+from trading_bot_mvp.shared.model import OrderRequest
 
 
 class AlpacaAPIClient(BaseAPIClient):
@@ -33,6 +34,33 @@ class AlpacaAPIClient(BaseAPIClient):
         """
         req = APIRequest(method='GET', endpoint='/v2/account')
         return self.request(req)
+
+    def get_open_positions(self, symbol: str | None = None) -> Response:
+        """
+        Fetch open positions from Alpaca.
+        :param symbol: Optional symbol to filter positions by.
+        :return: Raw HTTP response containing open positions.
+        """
+        endpoint = '/v2/positions'
+        if symbol:
+            endpoint += f'/{symbol}'
+        req = APIRequest(method='GET', endpoint=endpoint, params=None)
+        return self.request(req)
+
+    def place_order(self, order_request: OrderRequest) -> Response:
+        """
+        Place an order using the Alpaca API.
+        :param order_request: The order request data as a dictionary.
+        :return: Raw HTTP response containing the order response.
+        """
+        # todo implement me
+        # req = APIRequest(method='POST', endpoint='/v2/orders', json_data=order_request)
+        # return self.request(req)
+        return Response(
+            status_code=200,
+            content=b'Order placement not implemented yet',
+            headers=self._headers,
+        )
 
 
 class AlpacaDataClient(BaseAPIClient):

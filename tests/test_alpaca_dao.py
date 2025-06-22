@@ -13,7 +13,7 @@ def alpaca_dao() -> AlpacaDAO:
 
 
 def test_get_bars_returns_dataframe(alpaca_dao: AlpacaDAO) -> None:
-    request = BarRequest(symbol='AAPL', timeframe=Timeframe.field_1d, start=None, end=None)
+    request = BarRequest(symbol='AAPL', timeframe=Timeframe.field_1D, start=None, end=None)
     df = alpaca_dao.get_bars(request)
     assert isinstance(df, pd.DataFrame)
     assert 'symbol' in df.columns

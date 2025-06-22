@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 
 from trading_bot_mvp.client.base_client import BaseAPIClient
 from trading_bot_mvp.service.base_service import BaseService
-from trading_bot_mvp.shared.model import Account
+from trading_bot_mvp.shared.model import Account, OrderRequest, OrderResponse, Position
 
 
 class BaseBrokerageService(BaseService, ABC):
@@ -18,6 +18,23 @@ class BaseBrokerageService(BaseService, ABC):
     def get_account(self) -> Account:
         """
         Abstract method to fetch account information using the shared model.
+        Should be implemented by subclasses.
+        """
+        pass
+
+    @abstractmethod
+    def get_open_positions(self, symbol: str | None = None) -> list[Position]:
+        """
+        Abstract method to fetch open positions using the shared model.
+        :param symbol: Optional symbol to filter positions by.
+        Should be implemented by subclasses.
+        """
+        pass
+
+    @abstractmethod
+    def place_order(self, order_request: OrderRequest) -> OrderResponse:
+        """
+        Abstract method to place an order using the shared model.
         Should be implemented by subclasses.
         """
         pass
