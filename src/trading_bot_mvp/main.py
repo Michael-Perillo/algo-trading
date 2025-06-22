@@ -1,11 +1,10 @@
 import pandas as pd
 
-from trading_bot_mvp.client.alpaca.alpaca_client import AlpacaAPIClient
 from trading_bot_mvp.service.brokerage.alpaca.alpaca_brokerage_service import (
     AlpacaBrokerageService,
 )
 from trading_bot_mvp.service.data.alpaca.alpaca_dao import AlpacaDAO
-from trading_bot_mvp.shared.model import BarRequest
+from trading_bot_mvp.shared.model import BarRequest, Timeframe
 
 if __name__ == '__main__':
     # Initialize the Alpaca API client and services
@@ -22,7 +21,7 @@ if __name__ == '__main__':
     # todo fix the request issue with start and end dates
     bar_request = BarRequest(
         symbol='AAPL',
-        timeframe='1D',
+        timeframe=Timeframe.field_1d,
         start=pd.to_datetime('2023-01-01'),
         end=pd.to_datetime('2023-02-01'),
     )

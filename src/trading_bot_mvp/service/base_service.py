@@ -1,8 +1,9 @@
 from abc import ABC
-from trading_bot_mvp.client.base_client import BaseAPIClient
-from typing import Type, Dict, Any, TypeVar, Optional
+from typing import TypeVar
+
 from pydantic import BaseModel
 
+from trading_bot_mvp.client.base_client import BaseAPIClient
 from trading_bot_mvp.shared.model import FieldMap
 
 GenericBaseModel = TypeVar('GenericBaseModel', bound=BaseModel)
@@ -14,18 +15,20 @@ class BaseService(ABC):
     Subclasses should implement domain-specific logic and response parsing.
     """
 
-    def __init__(self, api_client: Optional[BaseAPIClient] = None):
+    def __init__(self, api_client: BaseAPIClient | None = None):
         self.api_client = api_client
 
     @staticmethod
     def map_model(
         source: BaseModel,
-        target_model: Type[GenericBaseModel],
-        field_map: FieldMap = None,
+        target_model: type[GenericBaseModel],
+        field_map: FieldMap | None = None,
     ) -> GenericBaseModel:
         """
-        Map fields from a source Pydantic model to a target Pydantic model, optionally renaming fields using a FieldMap.
-        Main use case is to convert between different API response models or DTOs (Data Transfer Objects).
+        Map fields from a source Pydantic model to a target Pydantic model,
+        optionally renaming fields using a FieldMap.
+        Main use case is to convert between different API response models or DTOs
+        (Data Transfer Objects).
         :param source: The source Pydantic model instance
         :param target_model: The target Pydantic model class
         :param field_map: Optional FieldMap instance for mapping source to target fields

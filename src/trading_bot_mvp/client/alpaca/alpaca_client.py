@@ -1,20 +1,20 @@
-from trading_bot_mvp.client.base_client import BaseAPIClient, APIRequest
-from typing import Optional, Dict, Any
-from httpx import Response
 import datetime as dt
+from typing import Any
 
+from httpx import Response
+
+from trading_bot_mvp.client.base_client import APIRequest, BaseAPIClient
 from trading_bot_mvp.settings import get_settings
 
 
 class AlpacaAPIClient(BaseAPIClient):
     """
     Concrete implementation of BaseAPIClient for Alpaca's Data and Trading APIs.
-    This client parametrizes requests using APIRequest and can be used for both trading_spec and data_spec endpoints.
+    This client parametrizes requests using APIRequest and can be used for
+    both trading_spec and data_spec endpoints.
     """
 
-    def __init__(
-        self, base_url: Optional[str] = None, headers: Optional[Dict[str, Any]] = None
-    ):
+    def __init__(self, base_url: str | None = None, headers: dict[str, Any] | None = None):
         # todo break settings out into separate configs for different apis
         if base_url is not None and headers is not None:
             super().__init__(base_url, headers)
@@ -41,9 +41,7 @@ class AlpacaDataClient(BaseAPIClient):
     This client is used for fetching market data.
     """
 
-    def __init__(
-        self, base_url: Optional[str] = None, headers: Optional[Dict[str, Any]] = None
-    ):
+    def __init__(self, base_url: str | None = None, headers: dict[str, Any] | None = None):
         if base_url is not None and headers is not None:
             super().__init__(base_url, headers)
             return
@@ -59,14 +57,14 @@ class AlpacaDataClient(BaseAPIClient):
         self,
         symbols: str,
         timeframe: str,
-        start: dt.datetime = None,
-        end: dt.datetime = None,
-        limit: int = None,
-        page_token: str = None,
-        adjustment: str = None,
-        feed: str = None,
-        as_of: dt.datetime = None,
-        sort: str = None,
+        start: dt.datetime | None = None,
+        end: dt.datetime | None = None,
+        limit: int | None = None,
+        page_token: str | None = None,
+        adjustment: str | None = None,
+        feed: str | None = None,
+        as_of: dt.datetime | None = None,
+        sort: str | None = None,
     ) -> Response:
         """
         Get Bar data for multiple stock symbols using the /v2/stocks/bars endpoint.
@@ -93,15 +91,13 @@ class AlpacaDataClient(BaseAPIClient):
 
         if start is not None:
             # format start and end to YYYY-MM-DD if they are not None
-            start_str = (
-                start.strftime('%Y-%m-%d') if isinstance(start, dt.datetime) else start
-            )
+            start_str = start.strftime('%Y-%m-%d') if isinstance(start, dt.datetime) else start
             params['start'] = start_str
         if end is not None:
             end_str = end.strftime('%Y-%m-%d') if isinstance(end, dt.datetime) else end
             params['end'] = end_str
         if limit is not None:
-            params['limit'] = limit
+            params['limit'] = str(limit)
         if page_token is not None:
             params['page_token'] = page_token
         if adjustment is not None:
@@ -109,9 +105,7 @@ class AlpacaDataClient(BaseAPIClient):
         if feed is not None:
             params['feed'] = feed
         if as_of is not None:
-            params['as_of'] = (
-                as_of.isoformat() if isinstance(as_of, dt.datetime) else as_of
-            )
+            params['as_of'] = as_of.isoformat() if isinstance(as_of, dt.datetime) else as_of
         if sort is not None:
             params['sort'] = sort
         req = APIRequest(method='GET', endpoint='/v2/stocks/bars', params=params)

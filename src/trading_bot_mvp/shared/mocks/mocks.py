@@ -1,12 +1,14 @@
-from unittest.mock import MagicMock
-from trading_bot_mvp.client.alpaca.alpaca_client import AlpacaAPIClient
 from httpx import Response
+
+from trading_bot_mvp.client.alpaca.alpaca_client import AlpacaAPIClient
 
 
 class DummyAPIClient(AlpacaAPIClient):
-    def get_account(self):
-        return MagicMock(
-            json=lambda: {
+    def get_account(self) -> Response:
+        return Response(
+            status_code=200,
+            headers={'Content-Type': 'application/json'},
+            json={
                 'id': '26201567-9303-4df5-8f8f-a4727d1053a4',
                 'admin_configurations': {},
                 'user_configurations': None,
@@ -48,39 +50,39 @@ class DummyAPIClient(AlpacaAPIClient):
                 'crypto_tier': 0,
                 'intraday_adjustments': '0',
                 'pending_reg_taf_fees': '0',
-            }
+            },
         )
 
     def get_bars(
         self,
         symbols: str,
-        start: str = None,
-        end: str = None,
-        timeframe: str = None,
-        limit: int = None,
-        page_token: str = None,
-        adjustment: str = None,
-        feed: str = None,
-    ):
+        timeframe: str,
+        start: str | None = None,
+        end: str | None = None,
+        limit: int | None = None,
+        page_token: str | None = None,
+        adjustment: str | None = None,
+        feed: str | None = None,
+    ) -> Response:
         # Simulate a paginated Alpaca API response for bars
-        class DummyResponse(Response):
-            def json(self_inner):
-                return {
-                    'bars': {
-                        'AAPL': [
-                            {
-                                't': '2022-01-03T09:00:00Z',
-                                'o': 178.26,
-                                'h': 178.26,
-                                'l': 178.21,
-                                'c': 178.21,
-                                'v': 1118,
-                                'n': 65,
-                                'vw': 178.235733,
-                            }
-                        ]
-                    },
-                    'next_page_token': None,
-                }
-
-        return DummyResponse(status_code=200)
+        return Response(
+            status_code=200,
+            headers={'Content-Type': 'application/json'},
+            json={
+                'bars': {
+                    'AAPL': [
+                        {
+                            't': '2022-01-03T09:00:00Z',
+                            'o': 178.26,
+                            'h': 178.26,
+                            'l': 178.21,
+                            'c': 178.21,
+                            'v': 1118,
+                            'n': 65,
+                            'vw': 178.235733,
+                        }
+                    ]
+                },
+                'next_page_token': None,
+            },
+        )

@@ -6,7 +6,7 @@ from __future__ import annotations
 
 from datetime import date, datetime
 from enum import Enum
-from typing import Dict, List, Optional
+from typing import Optional
 
 from pydantic import AnyUrl, BaseModel, Field, RootModel, constr
 
@@ -47,7 +47,7 @@ class CARedemption(BaseModel):
     symbol: str
     rate: float
     process_date: CAProcessDate
-    payable_date: Optional[CAPayableDate] = None
+    payable_date: CAPayableDate | None = None
 
 
 class CAReverseSplit(BaseModel):
@@ -56,8 +56,8 @@ class CAReverseSplit(BaseModel):
     old_rate: float
     process_date: CAProcessDate
     ex_date: CAExDate
-    record_date: Optional[CARecordDate] = None
-    payable_date: Optional[CAPayableDate] = None
+    record_date: CARecordDate | None = None
+    payable_date: CAPayableDate | None = None
 
 
 class CASpinOff(BaseModel):
@@ -67,9 +67,9 @@ class CASpinOff(BaseModel):
     new_rate: float
     process_date: CAProcessDate
     ex_date: CAExDate
-    record_date: Optional[CARecordDate] = None
-    payable_date: Optional[CAPayableDate] = None
-    due_bill_redemption_date: Optional[CADueBillRedemptionDate] = None
+    record_date: CARecordDate | None = None
+    payable_date: CAPayableDate | None = None
+    due_bill_redemption_date: CADueBillRedemptionDate | None = None
 
 
 class CAStockAndCashMerger(BaseModel):
@@ -80,7 +80,7 @@ class CAStockAndCashMerger(BaseModel):
     cash_rate: float
     process_date: CAProcessDate
     effective_date: CAEffectiveDate
-    payable_date: Optional[CAPayableDate] = None
+    payable_date: CAPayableDate | None = None
 
 
 class CAStockDividend(BaseModel):
@@ -88,8 +88,8 @@ class CAStockDividend(BaseModel):
     rate: float
     process_date: CAProcessDate
     ex_date: CAExDate
-    record_date: Optional[CARecordDate] = None
-    payable_date: Optional[CAPayableDate] = None
+    record_date: CARecordDate | None = None
+    payable_date: CAPayableDate | None = None
 
 
 class CAStockMerger(BaseModel):
@@ -99,7 +99,7 @@ class CAStockMerger(BaseModel):
     acquiree_rate: float
     process_date: CAProcessDate
     effective_date: CAEffectiveDate
-    payable_date: Optional[CAPayableDate] = None
+    payable_date: CAPayableDate | None = None
 
 
 class CAUnitSplit(BaseModel):
@@ -111,7 +111,7 @@ class CAUnitSplit(BaseModel):
     alternate_rate: float
     process_date: CAProcessDate
     effective_date: CAEffectiveDate
-    payable_date: Optional[CAPayableDate] = None
+    payable_date: CAPayableDate | None = None
 
 
 class CAWorthlessRemoval(BaseModel):
@@ -168,7 +168,7 @@ class NewsImage(BaseModel):
 
 
 class NextPageToken(RootModel[Optional[str]]):
-    root: Optional[str] = Field(None, description='Pagination token for next page.')
+    root: str | None = Field(None, description='Pagination token for next page.')
 
 
 class OptionFeed(Enum):
@@ -195,16 +195,12 @@ class ScreenerMarketType(Enum):
 
 class ScreenerMostActive(BaseModel):
     symbol: str
-    volume: int = Field(
-        ..., description='Cumulative volume for the current trading day.'
-    )
-    trade_count: int = Field(
-        ..., description='Cumulative trade count for the current trading day.'
-    )
+    volume: int = Field(..., description='Cumulative volume for the current trading day.')
+    trade_count: int = Field(..., description='Cumulative trade count for the current trading day.')
 
 
 class ScreenerMostActivesResp(BaseModel):
-    most_actives: List[ScreenerMostActive] = Field(
+    most_actives: list[ScreenerMostActive] = Field(
         ..., description='List of top N most active symbols.'
     )
     last_updated: str = Field(
@@ -215,16 +211,14 @@ class ScreenerMostActivesResp(BaseModel):
 
 class ScreenerMover(BaseModel):
     symbol: str = Field(..., description='Symbol of market moving asset.')
-    percent_change: float = Field(
-        ..., description='Percentage difference change for the day.'
-    )
+    percent_change: float = Field(..., description='Percentage difference change for the day.')
     change: float = Field(..., description='Difference in change for the day.')
     price: float = Field(..., description='Current price of market moving asset.')
 
 
 class ScreenerMoversResp(BaseModel):
-    gainers: List[ScreenerMover] = Field(..., description='List of top N gainers.')
-    losers: List[ScreenerMover] = Field(..., description='List of top N losers.')
+    gainers: list[ScreenerMover] = Field(..., description='List of top N gainers.')
+    losers: list[ScreenerMover] = Field(..., description='List of top N losers.')
     market_type: ScreenerMarketType
     last_updated: str = Field(
         ...,
@@ -248,12 +242,12 @@ class StockAuctionFeed(RootModel[str]):
     root: str
 
 
-class StockConditions(RootModel[Optional[Dict[str, str]]]):
-    root: Optional[Dict[str, str]] = None
+class StockConditions(RootModel[Optional[dict[str, str]]]):
+    root: dict[str, str] | None = None
 
 
-class StockExchanges(RootModel[Optional[Dict[str, str]]]):
-    root: Optional[Dict[str, str]] = None
+class StockExchanges(RootModel[Optional[dict[str, str]]]):
+    root: dict[str, str] | None = None
 
 
 class StockHistoricalFeed(Enum):
@@ -289,19 +283,19 @@ class CACashDividend(BaseModel):
     foreign: bool
     process_date: CAProcessDate
     ex_date: CAExDate
-    record_date: Optional[CARecordDate] = None
-    payable_date: Optional[CAPayableDate] = None
-    due_bill_on_date: Optional[date] = None
-    due_bill_off_date: Optional[date] = None
+    record_date: CARecordDate | None = None
+    payable_date: CAPayableDate | None = None
+    due_bill_on_date: date | None = None
+    due_bill_off_date: date | None = None
 
 
 class CACashMerger(BaseModel):
-    acquirer_symbol: Optional[str] = None
+    acquirer_symbol: str | None = None
     acquiree_symbol: str
     rate: float
     process_date: CAProcessDate
     effective_date: CAEffectiveDate
-    payable_date: Optional[CAPayableDate] = None
+    payable_date: CAPayableDate | None = None
 
 
 class RightsDistribution(BaseModel):
@@ -310,9 +304,9 @@ class RightsDistribution(BaseModel):
     rate: float
     process_date: CAProcessDate
     ex_date: CAExDate
-    record_date: Optional[CARecordDate] = None
+    record_date: CARecordDate | None = None
     payable_date: CAPayableDate
-    expiration_date: Optional[date] = None
+    expiration_date: date | None = None
 
 
 class CAForwardSplit(BaseModel):
@@ -321,9 +315,9 @@ class CAForwardSplit(BaseModel):
     old_rate: float
     process_date: CAProcessDate
     ex_date: CAExDate
-    record_date: Optional[CARecordDate] = None
-    payable_date: Optional[CAPayableDate] = None
-    due_bill_redemption_date: Optional[CADueBillRedemptionDate] = None
+    record_date: CARecordDate | None = None
+    payable_date: CAPayableDate | None = None
+    due_bill_redemption_date: CADueBillRedemptionDate | None = None
 
 
 class CANameChange(BaseModel):
@@ -344,18 +338,18 @@ class CryptoBar(BaseModel):
 
 
 class CryptoBarsResp(BaseModel):
-    bars: Dict[str, List[CryptoBar]]
+    bars: dict[str, list[CryptoBar]]
     next_page_token: NextPageToken
 
 
 class CryptoLatestBarsResp(BaseModel):
-    bars: Dict[str, CryptoBar]
+    bars: dict[str, CryptoBar]
 
 
 class CryptoOrderbook(BaseModel):
     t: Timestamp
-    b: List[CryptoOrderbookEntry]
-    a: List[CryptoOrderbookEntry]
+    b: list[CryptoOrderbookEntry]
+    a: list[CryptoOrderbookEntry]
 
 
 class CryptoQuote(BaseModel):
@@ -367,7 +361,7 @@ class CryptoQuote(BaseModel):
 
 
 class CryptoQuotesResp(BaseModel):
-    quotes: Dict[str, List[CryptoQuote]]
+    quotes: dict[str, list[CryptoQuote]]
     next_page_token: NextPageToken
 
 
@@ -380,33 +374,25 @@ class CryptoTrade(BaseModel):
 
 
 class CryptoTradesResp(BaseModel):
-    trades: Dict[str, List[CryptoTrade]]
+    trades: dict[str, list[CryptoTrade]]
     next_page_token: NextPageToken
 
 
 class ForexLatestRatesResp(BaseModel):
-    rates: Dict[str, ForexRate]
+    rates: dict[str, ForexRate]
 
 
 class ForexRatesResp(BaseModel):
-    rates: Dict[str, List[ForexRate]]
+    rates: dict[str, list[ForexRate]]
     next_page_token: NextPageToken
 
 
 class News(BaseModel):
     id: int = Field(..., description='News article ID.')
-    headline: constr(min_length=1) = Field(
-        ..., description='Headline or title of the article.'
-    )
-    author: constr(min_length=1) = Field(
-        ..., description='Original author of news article.'
-    )
-    created_at: datetime = Field(
-        ..., description='Date article was created (RFC-3339).'
-    )
-    updated_at: datetime = Field(
-        ..., description='Date article was updated (RFC-3339).'
-    )
+    headline: constr(min_length=1) = Field(..., description='Headline or title of the article.')
+    author: constr(min_length=1) = Field(..., description='Original author of news article.')
+    created_at: datetime = Field(..., description='Date article was created (RFC-3339).')
+    updated_at: datetime = Field(..., description='Date article was updated (RFC-3339).')
     summary: constr(min_length=1) = Field(
         ...,
         description='Summary text for the article (may be first sentence of content).',
@@ -414,19 +400,19 @@ class News(BaseModel):
     content: constr(min_length=1) = Field(
         ..., description='Content of the news article (might contain HTML).'
     )
-    url: Optional[AnyUrl] = Field(None, description='URL of article (if applicable).')
-    images: List[NewsImage] = Field(
+    url: AnyUrl | None = Field(None, description='URL of article (if applicable).')
+    images: list[NewsImage] = Field(
         ...,
         description='List of images (URLs) related to given article (may be empty).',
     )
-    symbols: List[str] = Field(..., description='List of related or mentioned symbols.')
+    symbols: list[str] = Field(..., description='List of related or mentioned symbols.')
     source: constr(min_length=1) = Field(
         ..., description='Source where the news originated from (e.g. Benzinga).'
     )
 
 
 class NewsResp(BaseModel):
-    news: List[News]
+    news: list[News]
     next_page_token: NextPageToken
 
 
@@ -442,9 +428,9 @@ class OptionBar(BaseModel):
 
 
 class OptionBarsResp(BaseModel):
-    bars: Dict[str, List[OptionBar]]
+    bars: dict[str, list[OptionBar]]
     next_page_token: NextPageToken
-    currency: Optional[str] = None
+    currency: str | None = None
 
 
 class OptionQuote(BaseModel):
@@ -467,8 +453,8 @@ class OptionTrade(BaseModel):
 
 
 class OptionTradesResp(BaseModel):
-    trades: Dict[str, List[OptionTrade]]
-    currency: Optional[str] = None
+    trades: dict[str, list[OptionTrade]]
+    currency: str | None = None
     next_page_token: NextPageToken
 
 
@@ -479,7 +465,7 @@ class StockAuction(BaseModel):
         description='Exchange code. See `v2/stocks/meta/exchanges` for more details.',
     )
     p: float = Field(..., description='Auction price.')
-    s: Optional[int] = Field(None, description='Auction trade size.')
+    s: int | None = Field(None, description='Auction trade size.')
     c: str = Field(
         ...,
         description='The condition flag indicating that this is an auction. See `v2/stocks/meta/conditions/trade` for more details.\n',
@@ -498,36 +484,36 @@ class StockBar(BaseModel):
 
 
 class StockBarsResp(BaseModel):
-    bars: Dict[str, List[StockBar]]
+    bars: dict[str, list[StockBar]]
     next_page_token: NextPageToken
-    currency: Optional[str] = None
+    currency: str | None = None
 
 
 class StockBarsRespSingle(BaseModel):
     symbol: str
-    bars: List[StockBar]
-    currency: Optional[str] = None
+    bars: list[StockBar]
+    currency: str | None = None
     next_page_token: NextPageToken
 
 
 class StockDailyAuctions(BaseModel):
     d: date = Field(..., description='Date in RFC-3339.')
-    o: List[StockAuction] = Field(..., description='Opening auctions.')
-    c: List[StockAuction] = Field(
+    o: list[StockAuction] = Field(..., description='Opening auctions.')
+    c: list[StockAuction] = Field(
         ...,
         description='Closing auctions. Every price / exchange / condition triplet is only shown once, with its earliest timestamp.',
     )
 
 
 class StockLatestBarsResp(BaseModel):
-    bars: Dict[str, StockBar]
-    currency: Optional[str] = None
+    bars: dict[str, StockBar]
+    currency: str | None = None
 
 
 class StockLatestBarsRespSingle(BaseModel):
     bar: StockBar
     symbol: str
-    currency: Optional[str] = None
+    currency: str | None = None
 
 
 class StockQuote(BaseModel):
@@ -536,19 +522,15 @@ class StockQuote(BaseModel):
         ...,
         description='Bid exchange. See `v2/stocks/meta/exchanges` for more details.',
     )
-    bp: float = Field(
-        ..., description='Bid price. 0 means the security has no active bid.'
-    )
+    bp: float = Field(..., description='Bid price. 0 means the security has no active bid.')
     bs: int = Field(..., description='Bid size.')
     ax: str = Field(
         ...,
         description='Ask exchange. See `v2/stocks/meta/exchanges` for more details.',
     )
-    ap: float = Field(
-        ..., description='Ask price. 0 means the security has no active ask.'
-    )
+    ap: float = Field(..., description='Ask price. 0 means the security has no active ask.')
     as_: int = Field(..., alias='as', description='Ask size.')
-    c: List[str] = Field(
+    c: list[str] = Field(
         ...,
         description='Condition flags. See `v2/stocks/meta/conditions/quote` for more details. If the array contains one flag, it applies to both the bid and ask. If the array contains two flags, the first one applies to the bid and the second one to the ask.\n',
     )
@@ -556,15 +538,15 @@ class StockQuote(BaseModel):
 
 
 class StockQuotesResp(BaseModel):
-    quotes: Dict[str, List[StockQuote]]
-    currency: Optional[str] = None
+    quotes: dict[str, list[StockQuote]]
+    currency: str | None = None
     next_page_token: NextPageToken
 
 
 class StockQuotesRespSingle(BaseModel):
     symbol: str
-    quotes: List[StockQuote]
-    currency: Optional[str] = None
+    quotes: list[StockQuote]
+    currency: str | None = None
     next_page_token: NextPageToken
 
 
@@ -577,44 +559,44 @@ class StockTrade(BaseModel):
     p: float = Field(..., description='Trade price.')
     s: int = Field(..., description='Trade size.')
     i: int = Field(..., description='Trade ID sent by the exchange.')
-    c: List[str] = Field(
+    c: list[str] = Field(
         ...,
         description='Condition flags. See `v2/stocks/meta/conditions/trade` for more details.',
     )
     z: StockTape
-    u: Optional[str] = Field(
+    u: str | None = Field(
         None,
         description="Update to the trade. This field is optional, if it's missing, the trade is valid. Otherwise, it can have these values:\n - canceled: indicates that the trade has been canceled\n - incorrect: indicates that the trade has been corrected and the given trade is no longer valid\n - corrected: indicates that this trade is the correction of a previous (incorrect) trade\n",
     )
 
 
 class StockTradesResp(BaseModel):
-    trades: Dict[str, List[StockTrade]]
-    currency: Optional[str] = None
+    trades: dict[str, list[StockTrade]]
+    currency: str | None = None
     next_page_token: NextPageToken
 
 
 class StockTradesRespSingle(BaseModel):
     symbol: str
-    trades: List[StockTrade]
+    trades: list[StockTrade]
     next_page_token: NextPageToken
-    currency: Optional[str] = None
+    currency: str | None = None
 
 
 class CACorporateActions(BaseModel):
-    reverse_splits: Optional[List[CAReverseSplit]] = None
-    forward_splits: Optional[List[CAForwardSplit]] = None
-    unit_splits: Optional[List[CAUnitSplit]] = None
-    stock_dividends: Optional[List[CAStockDividend]] = None
-    cash_dividends: Optional[List[CACashDividend]] = None
-    spin_offs: Optional[List[CASpinOff]] = None
-    cash_mergers: Optional[List[CACashMerger]] = None
-    stock_mergers: Optional[List[CAStockMerger]] = None
-    stock_and_cash_mergers: Optional[List[CAStockAndCashMerger]] = None
-    redemptions: Optional[List[CARedemption]] = None
-    name_changes: Optional[List[CANameChange]] = None
-    worthless_removals: Optional[List[CAWorthlessRemoval]] = None
-    rights_distributions: Optional[List[RightsDistribution]] = None
+    reverse_splits: list[CAReverseSplit] | None = None
+    forward_splits: list[CAForwardSplit] | None = None
+    unit_splits: list[CAUnitSplit] | None = None
+    stock_dividends: list[CAStockDividend] | None = None
+    cash_dividends: list[CACashDividend] | None = None
+    spin_offs: list[CASpinOff] | None = None
+    cash_mergers: list[CACashMerger] | None = None
+    stock_mergers: list[CAStockMerger] | None = None
+    stock_and_cash_mergers: list[CAStockAndCashMerger] | None = None
+    redemptions: list[CARedemption] | None = None
+    name_changes: list[CANameChange] | None = None
+    worthless_removals: list[CAWorthlessRemoval] | None = None
+    rights_distributions: list[RightsDistribution] | None = None
 
 
 class CACorporateActionsResp(BaseModel):
@@ -623,104 +605,104 @@ class CACorporateActionsResp(BaseModel):
 
 
 class CryptoLatestOrderbooksResp(BaseModel):
-    orderbooks: Dict[str, CryptoOrderbook]
+    orderbooks: dict[str, CryptoOrderbook]
 
 
 class CryptoLatestQuotesResp(BaseModel):
-    quotes: Dict[str, CryptoQuote]
+    quotes: dict[str, CryptoQuote]
 
 
 class CryptoLatestTradesResp(BaseModel):
-    trades: Dict[str, CryptoTrade]
+    trades: dict[str, CryptoTrade]
 
 
 class CryptoSnapshot(BaseModel):
-    dailyBar: Optional[CryptoBar] = None
-    latestQuote: Optional[CryptoQuote] = None
-    latestTrade: Optional[CryptoTrade] = None
-    minuteBar: Optional[CryptoBar] = None
-    prevDailyBar: Optional[CryptoBar] = None
+    dailyBar: CryptoBar | None = None
+    latestQuote: CryptoQuote | None = None
+    latestTrade: CryptoTrade | None = None
+    minuteBar: CryptoBar | None = None
+    prevDailyBar: CryptoBar | None = None
 
 
 class CryptoSnapshotsResp(BaseModel):
-    snapshots: Dict[str, CryptoSnapshot]
+    snapshots: dict[str, CryptoSnapshot]
 
 
 class OptionLatestQuotesResp(BaseModel):
-    quotes: Dict[str, OptionQuote]
+    quotes: dict[str, OptionQuote]
 
 
 class OptionLatestTradesResp(BaseModel):
-    trades: Dict[str, OptionTrade]
+    trades: dict[str, OptionTrade]
 
 
 class OptionSnapshot(BaseModel):
-    dailyBar: Optional[OptionBar] = None
-    greeks: Optional[Greeks] = Field(
+    dailyBar: OptionBar | None = None
+    greeks: Greeks | None = Field(
         None,
         description='The greeks for the contract calculated using the Black-Scholes model.',
     )
-    impliedVolatility: Optional[float] = Field(
+    impliedVolatility: float | None = Field(
         None, description='Implied volatility calculated using the Black-Scholes model.'
     )
-    latestQuote: Optional[OptionQuote] = None
-    latestTrade: Optional[OptionTrade] = None
-    minuteBar: Optional[OptionBar] = None
-    prevDailyBar: Optional[OptionBar] = None
+    latestQuote: OptionQuote | None = None
+    latestTrade: OptionTrade | None = None
+    minuteBar: OptionBar | None = None
+    prevDailyBar: OptionBar | None = None
 
 
 class OptionSnapshotsResp(BaseModel):
-    snapshots: Dict[str, OptionSnapshot]
+    snapshots: dict[str, OptionSnapshot]
     next_page_token: NextPageToken
 
 
 class StockAuctionsResp(BaseModel):
-    auctions: Dict[str, List[StockDailyAuctions]]
-    currency: Optional[str] = None
+    auctions: dict[str, list[StockDailyAuctions]]
+    currency: str | None = None
     next_page_token: NextPageToken
 
 
 class StockAuctionsRespSingle(BaseModel):
     symbol: str
-    auctions: List[StockDailyAuctions]
-    currency: Optional[str] = None
+    auctions: list[StockDailyAuctions]
+    currency: str | None = None
     next_page_token: NextPageToken
 
 
 class StockLatestQuotesResp(BaseModel):
-    quotes: Dict[str, StockQuote]
-    currency: Optional[str] = None
+    quotes: dict[str, StockQuote]
+    currency: str | None = None
 
 
 class StockLatestQuotesRespSingle(BaseModel):
     quote: StockQuote
     symbol: str
-    currency: Optional[str] = None
+    currency: str | None = None
 
 
 class StockLatestTradesResp(BaseModel):
-    trades: Dict[str, StockTrade]
-    currency: Optional[str] = None
+    trades: dict[str, StockTrade]
+    currency: str | None = None
 
 
 class StockLatestTradesRespSingle(BaseModel):
     trade: StockTrade
     symbol: str
-    currency: Optional[str] = None
+    currency: str | None = None
 
 
 class StockSnapshot(BaseModel):
-    dailyBar: Optional[StockBar] = None
-    latestQuote: Optional[StockQuote] = None
-    latestTrade: Optional[StockTrade] = None
-    minuteBar: Optional[StockBar] = None
-    prevDailyBar: Optional[StockBar] = None
+    dailyBar: StockBar | None = None
+    latestQuote: StockQuote | None = None
+    latestTrade: StockTrade | None = None
+    minuteBar: StockBar | None = None
+    prevDailyBar: StockBar | None = None
 
 
-class StockSnapshotsResp(RootModel[Optional[Dict[str, StockSnapshot]]]):
-    root: Optional[Dict[str, StockSnapshot]] = None
+class StockSnapshotsResp(RootModel[Optional[dict[str, StockSnapshot]]]):
+    root: dict[str, StockSnapshot] | None = None
 
 
 class StockSnapshotsRespSingle(StockSnapshot):
-    symbol: Optional[str] = None
-    currency: Optional[str] = None
+    symbol: str | None = None
+    currency: str | None = None

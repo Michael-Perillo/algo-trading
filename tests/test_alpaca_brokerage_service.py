@@ -1,22 +1,21 @@
 from uuid import UUID
 
-import pandas as pd
 import pytest
 
 from trading_bot_mvp.service.brokerage.alpaca.alpaca_brokerage_service import (
     AlpacaBrokerageService,
 )
-from trading_bot_mvp.shared.model import Account, BarRequest
 from trading_bot_mvp.shared.mocks.mocks import DummyAPIClient
+from trading_bot_mvp.shared.model import Account
 
 
 @pytest.fixture
-def alpaca_service():
+def alpaca_service() -> AlpacaBrokerageService:
     api_client = DummyAPIClient()
     return AlpacaBrokerageService(api_client)
 
 
-def test_get_account_maps_fields(alpaca_service):
+def test_get_account_maps_fields(alpaca_service: AlpacaBrokerageService) -> None:
     account = alpaca_service.get_account()
     assert isinstance(account, Account)
     assert account.id == UUID('26201567-9303-4df5-8f8f-a4727d1053a4')

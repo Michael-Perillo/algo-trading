@@ -14,6 +14,47 @@ license = {text = "MIT"}
 include = ["trading_bot_mvp"]
 from = "src"
 
+[tool.mypy]
+python_version = "3.13"
+plugins = ["pandera.mypy"]
+# enable strict mode
+strict = true
+exclude = [
+    "src/trading_bot_mvp/shared/model",
+    "src/trading_bot_mvp/client/alpaca/trading_models",
+    "src/trading_bot_mvp/client/alpaca/data_models"
+]
+
+[[tool.mypy.overrides]]
+module = [
+    "trading_bot_mvp.client.alpaca.trading_models",
+    "trading_bot_mvp.client.alpaca.data_models"
+]
+follow_imports = "skip"
+
+[tool.ruff]
+line-length = 100
+
+[tool.ruff.lint]
+# Select the rule codes to enforce.
+# "E" and "F" are Pyflakes/Pycodestyle errors (essential).
+# "W" are warnings.
+# "I" is for isort (import sorting).
+# "UP" is for pyupgrade (modernizing syntax).
+# "ANN" is for type annotations.
+select = ["E", "F", "W", "I", "UP"]
+
+# Ignore certain errors if needed (e.g., a specific print statement)
+# ignore = ["E501"]
+
+[tool.ruff.format]
+# Use single quotes for strings
+quote-style = "single"
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+
+
 [tool.pdm]
 distribution = false
 
@@ -29,31 +70,6 @@ format = "ruff format src tests"
 typecheck = "mypy src tests"
 generate_models = "./scripts/generate_alpaca_models.sh"
 
-[tool.mypy]
-python_version = "3.13"
-plugins = ["pandera.mypy"]
-# enable strict mode
-strict = true
-
-[tool.ruff.lint]
-# Select the rule codes to enforce.
-# "E" and "F" are Pyflakes/Pycodestyle errors (essential).
-# "W" are warnings.
-# "I" is for isort (import sorting).
-# "UP" is for pyupgrade (modernizing syntax).
-# "ANN" is for type annotations.
-select = ["E", "F", "W", "I", "UP", "ANN"]
-
-# Ignore certain errors if needed (e.g., a specific print statement)
-# ignore = ["E501"]
-
-[tool.ruff.format]
-# Use single quotes for strings
-quote-style = "single"
-
-[tool.pytest.ini_options]
-pythonpath = ["src"]
-
 [dependency-groups]
 dev = [
     "ruff>=0.12.0",
@@ -62,4 +78,11 @@ dev = [
     "pytest-cov>=6.2.1",
     "pytest-mock>=3.14.1",
     "datamodel-code-generator>=0.31.1",
+    "pandas-stubs>=2.2.3.250527",
 ]
+
+[tool.ruff.lint.per-file-ignores]
+"src/trading_bot_mvp/service/data/bars_column_models.py" = ["E501"]
+"src/trading_bot_mvp/shared/model.py" = ["E501", "E741"]
+"src/trading_bot_mvp/client/alpaca/trading_models.py" = ["E501", "UP045"]
+"src/trading_bot_mvp/client/alpaca/data_models.py" = ["E501", "UP045", "E741"]

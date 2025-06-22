@@ -1,3 +1,4 @@
+import trading_bot_mvp.client.alpaca.api_field_mappings.model as alpaca_field_mappings
 from trading_bot_mvp.client.alpaca.alpaca_client import AlpacaAPIClient
 from trading_bot_mvp.client.alpaca.trading_models import (
     Account as AlpacaAccountResponseBody,
@@ -6,13 +7,12 @@ from trading_bot_mvp.service.brokerage.base_brokerage_service import (
     BaseBrokerageService,
 )
 from trading_bot_mvp.shared.model import Account
-import trading_bot_mvp.client.alpaca.api_field_mappings.model as alpaca_field_mappings
 
 
 class AlpacaBrokerageService(BaseBrokerageService):
     api_client: AlpacaAPIClient
 
-    def __init__(self, api_client: AlpacaAPIClient = None):
+    def __init__(self, api_client: AlpacaAPIClient | None = None):
         if api_client is None:
             # Initialize the Alpaca API client if not provided
             api_client = AlpacaAPIClient()

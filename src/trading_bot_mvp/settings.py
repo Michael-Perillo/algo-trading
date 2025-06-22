@@ -12,8 +12,8 @@ class Settings(BaseSettings):
     model_config = SettingsConfigDict(env_file='.env', env_file_encoding='utf-8')
 
     # --- API Credentials (loaded from .env file) ---
-    API_KEY: str
-    SECRET_KEY: str
+    API_KEY: str | None = None
+    SECRET_KEY: str | None = None
 
     # --- Broker Configuration ---
     BASE_URL: str = 'https://paper-api.alpaca.markets'
@@ -23,5 +23,5 @@ class Settings(BaseSettings):
 
 
 # Create a single, importable instance of the settings
-def get_settings():
+def get_settings() -> Settings:
     return Settings()

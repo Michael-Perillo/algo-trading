@@ -6,7 +6,7 @@ from __future__ import annotations
 
 from datetime import date, datetime
 from enum import Enum
-from typing import Any, Dict, List, Optional
+from typing import Any, Optional
 from uuid import UUID
 
 from pydantic import BaseModel, Field, RootModel, constr
@@ -49,36 +49,30 @@ class MaxOptionsTradingLevel(Enum):
 
 
 class AccountConfigurations(BaseModel):
-    dtbp_check: Optional[DtbpCheck] = Field(
+    dtbp_check: DtbpCheck | None = Field(
         None,
         description='both, entry, or exit. Controls Day Trading Margin Call (DTMC) checks.',
     )
-    trade_confirm_email: Optional[str] = Field(
+    trade_confirm_email: str | None = Field(
         None, description='all or none. If none, emails for order fills are not sent.'
     )
-    suspend_trade: Optional[bool] = Field(
-        None, description='If true, new orders are blocked.'
-    )
-    no_shorting: Optional[bool] = Field(
-        None, description='If true, account becomes long-only mode.'
-    )
-    fractional_trading: Optional[bool] = Field(
+    suspend_trade: bool | None = Field(None, description='If true, new orders are blocked.')
+    no_shorting: bool | None = Field(None, description='If true, account becomes long-only mode.')
+    fractional_trading: bool | None = Field(
         None,
         description='If true, account is able to participate in fractional trading',
     )
-    max_margin_multiplier: Optional[str] = Field(
-        None, description='Can be "1", "2", or "4"'
-    )
-    max_options_trading_level: Optional[MaxOptionsTradingLevel] = Field(
+    max_margin_multiplier: str | None = Field(None, description='Can be "1", "2", or "4"')
+    max_options_trading_level: MaxOptionsTradingLevel | None = Field(
         None,
         description='The desired maximum options trading level. 0=disabled, 1=Covered Call/Cash-Secured Put, 2=Long Call/Put.',
     )
-    pdt_check: Optional[str] = Field(
+    pdt_check: str | None = Field(
         None,
         description='`both`, `entry`, or `exit`. If entry orders will be rejected on entering a position if it could result in PDT being set for the account. exit will reject exiting orders if they would result in PDT being set.',
         examples=['entry'],
     )
-    ptp_no_exception_entry: Optional[bool] = Field(
+    ptp_no_exception_entry: bool | None = Field(
         None,
         description='If set to true then Alpaca will accept orders for PTP symbols with no exception. Default is false.',
     )
@@ -261,7 +255,7 @@ class OptionDeliverable(BaseModel):
         description='Symbol of the deliverable. For standard contracts, this is equivalent to the underlying symbol of the contract.\n',
         examples=['AAPL'],
     )
-    asset_id: Optional[str] = Field(
+    asset_id: str | None = Field(
         None,
         description='Unique identifier of the deliverable asset. For standard contracts, this is equivalent to underlying_asset_id of the contracts.\nThis field is not returned for cash deliverables.\n',
         examples=['b0b6dd9d-8b9b-48a9-ba46-b9d54906e415'],
@@ -304,9 +298,7 @@ class WatchlistWithoutAsset(BaseModel):
 
 
 class Calendar(BaseModel):
-    date: constr(min_length=1) = Field(
-        ..., description='Date string in “%Y-%m-%d” format'
-    )
+    date: constr(min_length=1) = Field(..., description='Date string in “%Y-%m-%d” format')
     open: constr(min_length=1) = Field(
         ..., description='The time the market opens at on this date in “%H:%M” format'
     )
@@ -320,39 +312,29 @@ class Calendar(BaseModel):
 
 
 class Clock(BaseModel):
-    timestamp: Optional[datetime] = Field(None, description='Current timestamp\n')
-    is_open: Optional[bool] = Field(
-        None, description='Whether or not the market is open\n'
-    )
-    next_open: Optional[datetime] = Field(
-        None, description='Next Market open timestamp'
-    )
-    next_close: Optional[datetime] = Field(
-        None, description='Next market close timestamp'
-    )
+    timestamp: datetime | None = Field(None, description='Current timestamp\n')
+    is_open: bool | None = Field(None, description='Whether or not the market is open\n')
+    next_open: datetime | None = Field(None, description='Next Market open timestamp')
+    next_close: datetime | None = Field(None, description='Next market close timestamp')
 
 
 class PortfolioHistory(BaseModel):
-    timestamp: List[int] = Field(
+    timestamp: list[int] = Field(
         ...,
         description='Time of each data element, left-labeled (the beginning of time window).\n\nThe values returned are in [UNIX epoch format](https://en.wikipedia.org/wiki/Unix_time).\n',
     )
-    equity: List[float] = Field(
+    equity: list[float] = Field(
         ...,
         description='equity value of the account in dollar amount as of the end of each time window',
     )
-    profit_loss: List[float] = Field(
-        ..., description='profit/loss in dollar from the base value'
-    )
-    profit_loss_pct: List[float] = Field(
+    profit_loss: list[float] = Field(..., description='profit/loss in dollar from the base value')
+    profit_loss_pct: list[float] = Field(
         ...,
         description='profit/loss in percentage from the base value',
         examples=[[0.001, 0.002]],
     )
-    base_value: float = Field(
-        ..., description='basis in dollar of the profit loss calculation'
-    )
-    base_value_asof: Optional[date] = Field(
+    base_value: float = Field(..., description='basis in dollar of the profit loss calculation')
+    base_value_asof: date | None = Field(
         None,
         description="If included, then it indicates that the base_value is the account's closing\nequity value at this trading date.\n\nIf not specified, then the baseline calculation is done against the earliest returned data item. This could happen for\naccounts without prior closing balances (e.g. new account) or for queries with 1D timeframes, where the first data point\nis used as a reference point.\n",
         examples=['2023-10-20'],
@@ -360,7 +342,7 @@ class PortfolioHistory(BaseModel):
     timeframe: str = Field(
         ..., description='time window size of each data element', examples=['15Min']
     )
-    cashflow: Optional[Dict[str, Any]] = Field(
+    cashflow: dict[str, Any] | None = Field(
         None,
         description='accumulated value in dollar amount as of the end of each time window',
     )
@@ -377,35 +359,33 @@ class Exchange(Enum):
 
 
 class CanceledOrderResponse(BaseModel):
-    id: Optional[UUID] = Field(None, description='orderId')
-    status: Optional[int] = Field(
-        None, description='http response code', examples=[200]
-    )
+    id: UUID | None = Field(None, description='orderId')
+    status: int | None = Field(None, description='http response code', examples=[200])
 
 
 class PatchOrderRequest(BaseModel):
-    qty: Optional[str] = Field(
+    qty: str | None = Field(
         None,
         description='number of shares to trade.\n\nYou can only patch full shares for now.\n\nQty of equity fractional/notional orders are not allowed to change.',
         examples=['4'],
     )
-    time_in_force: Optional[TimeInForce] = None
-    limit_price: Optional[str] = Field(
+    time_in_force: TimeInForce | None = None
+    limit_price: str | None = Field(
         None,
         description="Required if original order's `type` field was `limit` or `stop_limit`.\nIn case of `mleg`, the limit_price parameter is expressed with the following notation:\n- A positive value indicates a debit, representing a cost or payment to be made.\n- A negative value signifies a credit, reflecting an amount to be received.",
         examples=['3.14'],
     )
-    stop_price: Optional[str] = Field(
+    stop_price: str | None = Field(
         None,
         description='required if original order type is limit or stop_limit',
         examples=['3.14'],
     )
-    trail: Optional[str] = Field(
+    trail: str | None = Field(
         None,
         description='the new value of the trail_price or trail_percent value (works only for type=“trailing_stop”)',
         examples=['3.14'],
     )
-    client_order_id: Optional[constr(max_length=128)] = Field(
+    client_order_id: constr(max_length=128) | None = Field(
         None,
         description='A unique identifier for the new order. Automatically generated if not sent. (<= 128 characters)',
     )
@@ -413,19 +393,19 @@ class PatchOrderRequest(BaseModel):
 
 class UpdateWatchlistRequest(BaseModel):
     name: str
-    symbols: Optional[List[str]] = None
+    symbols: list[str] | None = None
 
 
 class AddAssetToWatchlistRequest(BaseModel):
-    symbol: Optional[str] = Field(
+    symbol: str | None = Field(
         None, description='symbol name to append to watchlist', examples=['AAPL']
     )
 
 
 class CryptoWallet(BaseModel):
-    chain: Optional[str] = None
-    address: Optional[str] = None
-    created_at: Optional[datetime] = Field(
+    chain: str | None = None
+    address: str | None = None
+    created_at: datetime | None = Field(
         None, description='Timestamp (RFC3339) of account creation.'
     )
 
@@ -442,19 +422,17 @@ class Status3(Enum):
 
 
 class WhitelistedAddress(BaseModel):
-    id: Optional[str] = Field(None, description='Unique ID for whitelisted address')
-    chain: Optional[str] = Field(
-        None, description='Underlying network this address represents'
-    )
-    asset: Optional[str] = Field(
+    id: str | None = Field(None, description='Unique ID for whitelisted address')
+    chain: str | None = Field(None, description='Underlying network this address represents')
+    asset: str | None = Field(
         None, description='Symbol of underlying asset for the whitelisted address'
     )
-    address: Optional[str] = Field(None, description='The whitelisted address')
-    status: Optional[Status3] = Field(
+    address: str | None = Field(None, description='The whitelisted address')
+    status: Status3 | None = Field(
         None,
         description='Status of whitelisted address which is either ACTIVE or PENDING. Whitelisted addresses will be subjected to a 24 waiting period. After the waiting period is over the status will become ACTIVE.',
     )
-    created_at: Optional[datetime] = Field(
+    created_at: datetime | None = Field(
         None, description='Timestamp (RFC3339) of account creation.'
     )
 
@@ -479,7 +457,7 @@ class Error(BaseModel):
 
 
 class NextPageToken(RootModel[Optional[str]]):
-    root: Optional[str] = Field(
+    root: str | None = Field(
         None,
         description='Use this token in your next API call to paginate through the dataset and retrieve the next page of results. A null token indicates there are no more data to fetch.\n',
         examples=['MTAwMA=='],
@@ -488,219 +466,205 @@ class NextPageToken(RootModel[Optional[str]]):
 
 class Account(BaseModel):
     id: UUID = Field(..., description='Account Id.\n')
-    account_number: Optional[str] = Field(None, description='Account number.')
+    account_number: str | None = Field(None, description='Account number.')
     status: AccountStatus
-    currency: Optional[str] = Field(None, description='USD\n', examples=['USD'])
-    cash: Optional[str] = Field(None, description='Cash Balance\n')
-    portfolio_value: Optional[str] = Field(
+    currency: str | None = Field(None, description='USD\n', examples=['USD'])
+    cash: str | None = Field(None, description='Cash Balance\n')
+    portfolio_value: str | None = Field(
         None,
         description='Total value of cash + holding positions (This field is deprecated. It is equivalent to the equity field.)',
     )
-    non_marginable_buying_power: Optional[str] = Field(
+    non_marginable_buying_power: str | None = Field(
         None, description='Current available non-margin dollar buying power'
     )
-    accrued_fees: Optional[str] = Field(None, description='The fees collected.')
-    pending_transfer_in: Optional[str] = Field(
-        None, description='Cash pending transfer in.'
-    )
-    pending_transfer_out: Optional[str] = Field(
-        None, description='Cash pending transfer out.'
-    )
-    pattern_day_trader: Optional[bool] = Field(
+    accrued_fees: str | None = Field(None, description='The fees collected.')
+    pending_transfer_in: str | None = Field(None, description='Cash pending transfer in.')
+    pending_transfer_out: str | None = Field(None, description='Cash pending transfer out.')
+    pattern_day_trader: bool | None = Field(
         None,
         description='Whether or not the account has been flagged as a pattern day trader',
     )
-    trade_suspended_by_user: Optional[bool] = Field(
+    trade_suspended_by_user: bool | None = Field(
         None,
         description='User setting. If true, the account is not allowed to place orders.',
     )
-    trading_blocked: Optional[bool] = Field(
+    trading_blocked: bool | None = Field(
         None, description='If true, the account is not allowed to place orders.\n'
     )
-    transfers_blocked: Optional[bool] = Field(
+    transfers_blocked: bool | None = Field(
         None,
         description='If true, the account is not allowed to request money transfers.',
     )
-    account_blocked: Optional[bool] = Field(
+    account_blocked: bool | None = Field(
         None, description='If true, the account activity by user is prohibited.'
     )
-    created_at: Optional[datetime] = Field(
-        None, description='Timestamp this account was created at\n'
-    )
-    shorting_enabled: Optional[bool] = Field(
+    created_at: datetime | None = Field(None, description='Timestamp this account was created at\n')
+    shorting_enabled: bool | None = Field(
         None,
         description='Flag to denote whether or not the account is permitted to short',
     )
-    long_market_value: Optional[str] = Field(
+    long_market_value: str | None = Field(
         None,
         description='Real-time MtM value of all long positions held in the account\n',
     )
-    short_market_value: Optional[str] = Field(
+    short_market_value: str | None = Field(
         None,
         description='Real-time MtM value of all short positions held in the account',
     )
-    equity: Optional[str] = Field(
-        None, description='Cash + long_market_value + short_market_value'
-    )
-    last_equity: Optional[str] = Field(
+    equity: str | None = Field(None, description='Cash + long_market_value + short_market_value')
+    last_equity: str | None = Field(
         None, description='Equity as of previous trading day at 16:00:00 ET'
     )
-    multiplier: Optional[str] = Field(
+    multiplier: str | None = Field(
         None,
         description='Buying power multiplier that represents account margin classification; valid values 1 (standard limited margin account with 1x buying power), 2 (reg T margin account with 2x intraday and overnight buying power; this is the default for all non-PDT accounts with $2,000 or more equity), 4 (PDT account with 4x intraday buying power and 2x reg T overnight buying power)',
     )
-    buying_power: Optional[str] = Field(
+    buying_power: str | None = Field(
         None,
         description='Current available $ buying power; If multiplier = 4, this is your daytrade buying power which is calculated as (last_equity - (last) maintenance_margin) * 4; If multiplier = 2, buying_power = max(equity – initial_margin,0) * 2; If multiplier = 1, buying_power = cash',
     )
-    initial_margin: Optional[str] = Field(
+    initial_margin: str | None = Field(
         None,
         description='Reg T initial margin requirement (continuously updated value)',
     )
-    maintenance_margin: Optional[str] = Field(
+    maintenance_margin: str | None = Field(
         None, description='Maintenance margin requirement (continuously updated value)'
     )
-    sma: Optional[str] = Field(
+    sma: str | None = Field(
         None,
         description='Value of special memorandum account (will be used at a later date to provide additional buying_power)',
     )
-    daytrade_count: Optional[int] = Field(
+    daytrade_count: int | None = Field(
         None,
         description='The current number of daytrades that have been made in the last 5 trading days (inclusive of today)',
     )
-    balance_asof: Optional[str] = Field(
+    balance_asof: str | None = Field(
         None,
         description='The date of the snapshot for `last_*` fields',
         examples=['2021-04-01'],
     )
-    last_maintenance_margin: Optional[str] = Field(
+    last_maintenance_margin: str | None = Field(
         None,
         description='Your maintenance margin requirement on the previous trading day',
     )
-    daytrading_buying_power: Optional[str] = Field(
+    daytrading_buying_power: str | None = Field(
         None,
         description='Your buying power for day trades (continuously updated value)',
     )
-    regt_buying_power: Optional[str] = Field(
+    regt_buying_power: str | None = Field(
         None,
         description='Your buying power under Regulation T (your excess equity - equity minus margin value - times your margin multiplier)\n',
     )
-    options_buying_power: Optional[str] = Field(
+    options_buying_power: str | None = Field(
         None, description='Your buying power for options trading\n'
     )
-    options_approved_level: Optional[OptionsApprovedLevel] = Field(
+    options_approved_level: OptionsApprovedLevel | None = Field(
         None,
         description='The options trading level that was approved for this account.\n0=disabled, 1=Covered Call/Cash-Secured Put, 2=Long Call/Put.\n',
         examples=[2],
     )
-    options_trading_level: Optional[OptionsTradingLevel] = Field(
+    options_trading_level: OptionsTradingLevel | None = Field(
         None,
         description='The effective options trading level of the account.\nThis is the minimum between account options_approved_level and account configurations max_options_trading_level.\n0=disabled, 1=Covered Call/Cash-Secured Put, 2=Long Call/Put.\n',
         examples=[2],
     )
-    intraday_adjustments: Optional[str] = Field(
+    intraday_adjustments: str | None = Field(
         None,
         description='The intraday adjustment by non_trade_activities such as fund deposit/withdraw.\n',
         examples=['0'],
     )
-    pending_reg_taf_fees: Optional[str] = Field(
+    pending_reg_taf_fees: str | None = Field(
         None, description='Pending regulatory fees for the account.\n'
     )
 
 
 class TradingActivities(BaseModel):
-    activity_type: Optional[ActivityType] = None
-    id: Optional[str] = Field(
+    activity_type: ActivityType | None = None
+    id: str | None = Field(
         None,
         description='An id for the activity. Always in “::” format. Can be sent as page_token in requests to facilitate the paging of results.',
     )
-    cum_qty: Optional[str] = Field(
+    cum_qty: str | None = Field(
         None, description='The cumulative quantity of shares involved in the execution.'
     )
-    leaves_qty: Optional[str] = Field(
+    leaves_qty: str | None = Field(
         None,
         description='For partially_filled orders, the quantity of shares that are left to be filled.\n',
     )
-    price: Optional[str] = Field(
+    price: str | None = Field(
         None, description='The per-share price that the trade was executed at.'
     )
-    qty: Optional[str] = Field(
+    qty: str | None = Field(
         None, description='The number of shares involved in the trade execution.'
     )
-    side: Optional[str] = Field(None, description='buy or sell')
-    symbol: Optional[str] = Field(
+    side: str | None = Field(None, description='buy or sell')
+    symbol: str | None = Field(
         None, description='The symbol of the security being traded.', examples=['AAPL']
     )
-    transaction_time: Optional[datetime] = Field(
+    transaction_time: datetime | None = Field(
         None, description='The time at which the execution occurred.'
     )
-    order_id: Optional[UUID] = Field(
-        None, description='The id for the order that filled.'
-    )
-    type: Optional[Type] = Field(
-        None, description='fill or partial_fill', examples=['fill']
-    )
-    order_status: Optional[OrderStatus] = None
+    order_id: UUID | None = Field(None, description='The id for the order that filled.')
+    type: Type | None = Field(None, description='fill or partial_fill', examples=['fill'])
+    order_status: OrderStatus | None = None
 
 
 class NonTradeActivities(BaseModel):
-    activity_type: Optional[ActivityType] = None
-    activity_sub_type: Optional[ActivitySubType] = None
-    id: Optional[str] = Field(
+    activity_type: ActivityType | None = None
+    activity_sub_type: ActivitySubType | None = None
+    id: str | None = Field(
         None,
         description='An ID for the activity, always in “::” format. Can be sent as page_token in requests to facilitate the paging of results.',
     )
-    date: Optional[datetime] = Field(
+    date: datetime | None = Field(
         None,
         description='The date on which the activity occurred or on which the transaction associated with the activity settled.',
     )
-    net_amount: Optional[str] = Field(
+    net_amount: str | None = Field(
         None,
         description='The net amount of money (positive or negative) associated with the activity.',
     )
-    symbol: Optional[str] = Field(
+    symbol: str | None = Field(
         None,
         description='The symbol of the security involved with the activity. Not present for all activity types.',
     )
-    qty: Optional[str] = Field(
+    qty: str | None = Field(
         None,
         description='For dividend activities, the number of shares that contributed to the payment. Not present for other activity types.\n',
     )
-    per_share_amount: Optional[str] = Field(
+    per_share_amount: str | None = Field(
         None,
         description='For dividend activities, the average amount paid per share. Not present for other activity types.',
     )
-    group_id: Optional[str] = Field(
+    group_id: str | None = Field(
         None, description='ID used to link activities who share a sibling relationship.'
     )
-    status: Optional[Status] = Field(None, description='The activity status.')
+    status: Status | None = Field(None, description='The activity status.')
 
 
 class OrderLeg(BaseModel):
-    id: Optional[str] = Field(None, description='Order ID')
-    client_order_id: Optional[constr(max_length=128)] = Field(
+    id: str | None = Field(None, description='Order ID')
+    client_order_id: constr(max_length=128) | None = Field(
         None, description='Client unique order ID'
     )
-    created_at: Optional[datetime] = None
-    updated_at: Optional[datetime] = None
-    submitted_at: Optional[datetime] = None
-    filled_at: Optional[datetime] = None
-    expired_at: Optional[datetime] = None
-    canceled_at: Optional[datetime] = None
-    failed_at: Optional[datetime] = None
-    replaced_at: Optional[datetime] = None
-    replaced_by: Optional[UUID] = Field(
+    created_at: datetime | None = None
+    updated_at: datetime | None = None
+    submitted_at: datetime | None = None
+    filled_at: datetime | None = None
+    expired_at: datetime | None = None
+    canceled_at: datetime | None = None
+    failed_at: datetime | None = None
+    replaced_at: datetime | None = None
+    replaced_by: UUID | None = Field(
         None, description='The order ID that this order was replaced by'
     )
-    replaces: Optional[UUID] = Field(
-        None, description='The order ID that this order replaces'
-    )
-    asset_id: Optional[UUID] = Field(
+    replaces: UUID | None = Field(None, description='The order ID that this order replaces')
+    asset_id: UUID | None = Field(
         None,
         description='Asset ID (For options this represents the option contract ID)',
     )
     symbol: constr(min_length=1) = Field(..., description='Asset symbol')
-    asset_class: Optional[AssetClass] = None
+    asset_class: AssetClass | None = None
     notional: constr(min_length=1) = Field(
         ...,
         description='Ordered notional amount. If entered, qty will be null. Can take up to 9 decimal points.',
@@ -709,49 +673,43 @@ class OrderLeg(BaseModel):
         ...,
         description='Ordered quantity. If entered, notional will be null. Can take up to 9 decimal points.',
     )
-    filled_qty: Optional[constr(min_length=1)] = Field(
-        None, description='Filled quantity'
-    )
-    filled_avg_price: Optional[str] = Field(None, description='Filled average price')
-    order_class: Optional[OrderClass] = None
-    order_type: Optional[str] = Field(
-        None, description='Deprecated in favour of the field "type" '
-    )
+    filled_qty: constr(min_length=1) | None = Field(None, description='Filled quantity')
+    filled_avg_price: str | None = Field(None, description='Filled average price')
+    order_class: OrderClass | None = None
+    order_type: str | None = Field(None, description='Deprecated in favour of the field "type" ')
     type: OrderType
     side: OrderSide
     time_in_force: TimeInForce
-    limit_price: Optional[str] = Field(None, description='Limit price')
-    stop_price: Optional[str] = Field(None, description='Stop price')
-    status: Optional[OrderStatus] = None
-    extended_hours: Optional[bool] = Field(
+    limit_price: str | None = Field(None, description='Limit price')
+    stop_price: str | None = Field(None, description='Stop price')
+    status: OrderStatus | None = None
+    extended_hours: bool | None = Field(
         None,
         description='If true, eligible for execution outside regular trading hours.',
     )
-    legs: Optional[List] = Field(
+    legs: list | None = Field(
         None,
         description='When querying non-simple order_class orders in a nested style, an array of Order entities associated with this order. Otherwise, null.',
     )
-    trail_percent: Optional[str] = Field(
+    trail_percent: str | None = Field(
         None,
         description='The percent value away from the high water mark for trailing stop orders.',
     )
-    trail_price: Optional[str] = Field(
+    trail_price: str | None = Field(
         None,
         description='The dollar value away from the high water mark for trailing stop orders.',
     )
-    hwm: Optional[str] = Field(
+    hwm: str | None = Field(
         None,
         description='The highest (lowest) market price seen since the trailing stop order was submitted.',
     )
-    position_intent: Optional[PositionIntent] = None
+    position_intent: PositionIntent | None = None
 
 
 class MLegOrderLeg(BaseModel):
-    side: Optional[OrderSide] = None
-    position_intent: Optional[PositionIntent] = None
-    symbol: str = Field(
-        ..., description='symbol or asset ID to identify the asset to trade'
-    )
+    side: OrderSide | None = None
+    position_intent: PositionIntent | None = None
+    symbol: str = Field(..., description='symbol or asset ID to identify the asset to trade')
     ratio_qty: str = Field(
         ...,
         description='proportional quantity of this leg in relation to the overall multi-leg order qty',
@@ -763,9 +721,7 @@ class Assets(BaseModel):
     class_: AssetClass = Field(..., alias='class')
     exchange: Exchange
     symbol: str = Field(..., description='The symbol of the asset', examples=['AAPL'])
-    name: constr(min_length=1) = Field(
-        ..., description='The official name of the asset'
-    )
+    name: constr(min_length=1) = Field(..., description='The official name of the asset')
     status: Status1 = Field(..., description='active or inactive', examples=['active'])
     tradable: bool = Field(..., description='Asset is tradable on Alpaca or not')
     marginable: bool = Field(..., description='Asset is marginable or not')
@@ -775,19 +731,19 @@ class Assets(BaseModel):
         description='Asset is easy-to-borrow or not (filtering for easy_to_borrow = True is the best way to check whether the name is currently available to short at Alpaca).',
     )
     fractionable: bool = Field(..., description='Asset is fractionable or not')
-    maintenance_margin_requirement: Optional[float] = Field(
+    maintenance_margin_requirement: float | None = Field(
         None,
         description='**deprecated**: Please use margin_requirement_long or margin_requirement_short instead. Note that these fields are of type string.\nShows the margin requirement percentage for the asset (equities only).\n',
     )
-    margin_requirement_long: Optional[str] = Field(
+    margin_requirement_long: str | None = Field(
         None,
         description="The margin requirement percentage for the asset's long positions (equities only).",
     )
-    margin_requirement_short: Optional[str] = Field(
+    margin_requirement_short: str | None = Field(
         None,
         description="The margin requirement percentage for the asset's short positions (equities only).",
     )
-    attributes: Optional[List[Attribute]] = Field(
+    attributes: list[Attribute] | None = Field(
         None,
         description='One of `ptp_no_exception`, `ptp_with_exception`, `ipo`, `has_options`, or `options_late_close`. We will include unique characteristics of the asset here.',
         examples=[['ptp_no_exception', 'ipo']],
@@ -823,7 +779,7 @@ class OptionContract(BaseModel):
         description='The expiration date of the option contract.',
         examples=['2025-06-20'],
     )
-    root_symbol: Optional[str] = Field(
+    root_symbol: str | None = Field(
         None, description='The root symbol of the option contract.', examples=['AAPL']
     )
     underlying_symbol: str = Field(
@@ -836,9 +792,7 @@ class OptionContract(BaseModel):
         description='The unique identifier of the underlying asset.',
         examples=['b0b6dd9d-8b9b-48a9-ba46-b9d54906e415'],
     )
-    type: Type1 = Field(
-        ..., description='The type of the option contract.', examples=['call']
-    )
+    type: Type1 = Field(..., description='The type of the option contract.', examples=['call'])
     style: Style = Field(
         ..., description='The style of the option contract.', examples=['american']
     )
@@ -855,19 +809,19 @@ class OptionContract(BaseModel):
         description='Represents the number of underlying shares to be delivered in case the contract is exercised/assigned. For standard contracts, this is always 100.\nThis field should **not** be used as a multiplier, specially for non-standard contracts.',
         examples=['100'],
     )
-    open_interest: Optional[str] = Field(
+    open_interest: str | None = Field(
         None, description='The open interest of the option contract.', examples=['237']
     )
-    open_interest_date: Optional[date] = Field(
+    open_interest_date: date | None = Field(
         None, description='The date of the open interest data.', examples=['2023-12-11']
     )
-    close_price: Optional[str] = Field(
+    close_price: str | None = Field(
         None, description='The close price of the option contract.', examples=['148.38']
     )
-    close_price_date: Optional[date] = Field(
+    close_price_date: date | None = Field(
         None, description='The date of the close price data.', examples=['2023-12-11']
     )
-    deliverables: Optional[List[OptionDeliverable]] = Field(
+    deliverables: list[OptionDeliverable] | None = Field(
         None,
         description='Represents the deliverables tied to the option contract. While standard contracts entail a single deliverable, non-standard ones can encompass multiple deliverables, each potentially customized with distinct parameters.\nThis array is included in the list contracts response only if the query parameter show_deliverables=true is provided.\n',
     )
@@ -884,16 +838,14 @@ class Position(BaseModel):
         ..., description='Average entry price of the position'
     )
     qty: constr(min_length=1) = Field(..., description='The number of shares')
-    qty_available: Optional[constr(min_length=1)] = Field(
+    qty_available: constr(min_length=1) | None = Field(
         None, description='Total number of shares available minus open orders'
     )
     side: constr(min_length=1) = Field(..., description='“long”')
     market_value: constr(min_length=1) = Field(
         ..., description='Total dollar amount of the position'
     )
-    cost_basis: constr(min_length=1) = Field(
-        ..., description='Total cost basis in dollar'
-    )
+    cost_basis: constr(min_length=1) = Field(..., description='Total cost basis in dollar')
     unrealized_pl: constr(min_length=1) = Field(
         ..., description='Unrealized profit/loss in dollars'
     )
@@ -906,9 +858,7 @@ class Position(BaseModel):
     unrealized_intraday_plpc: constr(min_length=1) = Field(
         ..., description='Unrealized profit/loss percent (by a factor of 1)'
     )
-    current_price: constr(min_length=1) = Field(
-        ..., description='Current asset price per share'
-    )
+    current_price: constr(min_length=1) = Field(..., description='Current asset price per share')
     lastday_price: constr(min_length=1) = Field(
         ...,
         description='Last day’s asset price per share based on the closing value of the last trading day',
@@ -927,121 +877,101 @@ class Watchlist(BaseModel):
     name: constr(min_length=1) = Field(
         ..., description='user-defined watchlist name (up to 64 characters)'
     )
-    assets: Optional[List[Assets]] = Field(
+    assets: list[Assets] | None = Field(
         None,
         description='the content of this watchlist, in the order as registered by the client',
     )
 
 
 class CryptoTransfer(BaseModel):
-    id: Optional[UUID] = Field(None, description='The crypto transfer ID')
-    tx_hash: Optional[str] = Field(
-        None, description='On-chain transaction hash (e.g. 0xabc...xyz)'
-    )
-    direction: Optional[TransferDirection] = None
-    status: Optional[CryptoTransferStatus] = None
-    amount: Optional[str] = Field(
+    id: UUID | None = Field(None, description='The crypto transfer ID')
+    tx_hash: str | None = Field(None, description='On-chain transaction hash (e.g. 0xabc...xyz)')
+    direction: TransferDirection | None = None
+    status: CryptoTransferStatus | None = None
+    amount: str | None = Field(
         None,
         description='Amount of transfer denominated in the underlying crypto asset',
     )
-    usd_value: Optional[str] = Field(
-        None, description='Equivalent USD value at time of transfer'
-    )
-    network_fee: Optional[str] = None
-    fees: Optional[str] = None
-    chain: Optional[str] = Field(
-        None, description='Underlying network for given transfer'
-    )
-    asset: Optional[str] = Field(
+    usd_value: str | None = Field(None, description='Equivalent USD value at time of transfer')
+    network_fee: str | None = None
+    fees: str | None = None
+    chain: str | None = Field(None, description='Underlying network for given transfer')
+    asset: str | None = Field(
         None, description='Symbol of crypto asset for given transfer (e.g. BTC )'
     )
-    from_address: Optional[str] = Field(
-        None, description='Originating address of the transfer'
-    )
-    to_address: Optional[str] = Field(
-        None, description='Destination address of the transfer'
-    )
-    created_at: Optional[datetime] = Field(
-        None, description='Timedate when transfer was created'
-    )
+    from_address: str | None = Field(None, description='Originating address of the transfer')
+    to_address: str | None = Field(None, description='Destination address of the transfer')
+    created_at: datetime | None = Field(None, description='Timedate when transfer was created')
 
 
 class Order(BaseModel):
-    id: Optional[str] = Field(None, description='Order ID')
-    client_order_id: Optional[constr(max_length=128)] = Field(
+    id: str | None = Field(None, description='Order ID')
+    client_order_id: constr(max_length=128) | None = Field(
         None, description='Client unique order ID'
     )
-    created_at: Optional[datetime] = None
-    updated_at: Optional[datetime] = None
-    submitted_at: Optional[datetime] = None
-    filled_at: Optional[datetime] = None
-    expired_at: Optional[datetime] = None
-    canceled_at: Optional[datetime] = None
-    failed_at: Optional[datetime] = None
-    replaced_at: Optional[datetime] = None
-    replaced_by: Optional[UUID] = Field(
+    created_at: datetime | None = None
+    updated_at: datetime | None = None
+    submitted_at: datetime | None = None
+    filled_at: datetime | None = None
+    expired_at: datetime | None = None
+    canceled_at: datetime | None = None
+    failed_at: datetime | None = None
+    replaced_at: datetime | None = None
+    replaced_by: UUID | None = Field(
         None, description='The order ID that this order was replaced by'
     )
-    replaces: Optional[UUID] = Field(
-        None, description='The order ID that this order replaces'
-    )
-    asset_id: Optional[UUID] = Field(
+    replaces: UUID | None = Field(None, description='The order ID that this order replaces')
+    asset_id: UUID | None = Field(
         None,
         description='Asset ID (For options this represents the option contract ID)',
     )
-    symbol: Optional[constr(min_length=1)] = Field(
+    symbol: constr(min_length=1) | None = Field(
         None,
         description='Asset symbol, required for all order classes except for `mleg`',
     )
-    asset_class: Optional[AssetClass] = None
+    asset_class: AssetClass | None = None
     notional: constr(min_length=1) = Field(
         ...,
         description='Ordered notional amount. If entered, qty will be null. Can take up to 9 decimal points.',
     )
-    qty: Optional[constr(min_length=1)] = Field(
+    qty: constr(min_length=1) | None = Field(
         None,
         description='Ordered quantity. If entered, notional will be null. Can take up to 9 decimal points. Required if order class is `mleg`.',
     )
-    filled_qty: Optional[constr(min_length=1)] = Field(
-        None, description='Filled quantity'
-    )
-    filled_avg_price: Optional[str] = Field(None, description='Filled average price')
-    order_class: Optional[OrderClass] = None
-    order_type: Optional[str] = Field(
-        None, description='Deprecated in favour of the field "type" '
-    )
+    filled_qty: constr(min_length=1) | None = Field(None, description='Filled quantity')
+    filled_avg_price: str | None = Field(None, description='Filled average price')
+    order_class: OrderClass | None = None
+    order_type: str | None = Field(None, description='Deprecated in favour of the field "type" ')
     type: OrderType
-    side: Optional[OrderSide] = None
+    side: OrderSide | None = None
     time_in_force: TimeInForce
-    limit_price: Optional[str] = Field(None, description='Limit price')
-    stop_price: Optional[str] = Field(None, description='Stop price')
-    status: Optional[OrderStatus] = None
-    extended_hours: Optional[bool] = Field(
+    limit_price: str | None = Field(None, description='Limit price')
+    stop_price: str | None = Field(None, description='Stop price')
+    status: OrderStatus | None = None
+    extended_hours: bool | None = Field(
         None,
         description='If true, eligible for execution outside regular trading hours.',
     )
-    legs: Optional[List[OrderLeg]] = Field(
+    legs: list[OrderLeg] | None = Field(
         None,
         description='When querying non-simple order_class orders in a nested style, an array of Order entities associated with this order. Otherwise, null. Required if order class is `mleg`.',
     )
-    trail_percent: Optional[str] = Field(
+    trail_percent: str | None = Field(
         None,
         description='The percent value away from the high water mark for trailing stop orders.',
     )
-    trail_price: Optional[str] = Field(
+    trail_price: str | None = Field(
         None,
         description='The dollar value away from the high water mark for trailing stop orders.',
     )
-    hwm: Optional[str] = Field(
+    hwm: str | None = Field(
         None,
         description='The highest (lowest) market price seen since the trailing stop order was submitted.',
     )
-    position_intent: Optional[PositionIntent] = None
+    position_intent: PositionIntent | None = None
 
 
 class PositionClosedReponse(BaseModel):
     symbol: str = Field(..., description='Symbol name of the asset')
-    status: str = Field(
-        ..., description='Http status code for the attempt to close this position'
-    )
-    body: Optional[Order] = None
+    status: str = Field(..., description='Http status code for the attempt to close this position')
+    body: Order | None = None

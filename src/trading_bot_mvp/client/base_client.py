@@ -1,15 +1,17 @@
+from abc import ABC
+from typing import Any
+
 import httpx
 from pydantic import BaseModel
-from abc import ABC
-from typing import Optional, Dict, Any
+
 from trading_bot_mvp.settings import get_settings
 
 
 class APIRequest(BaseModel):
     method: str
     endpoint: str
-    json_data: Optional[Dict[str, Any]] = None
-    params: Optional[Dict[str, Any]] = None
+    json_data: dict[str, Any] | None = None
+    params: dict[str, Any] | None = None
 
 
 class BaseAPIClient(ABC):
@@ -18,13 +20,18 @@ class BaseAPIClient(ABC):
     Handles authentication and returns raw JSON/dict responses.
     """
 
-    def __init__(self, base_url: Optional[str] = None, headers: Optional[dict] = None):
+    def __init__(
+        self,
+        base_url: str | None = None,
+        headers: dict[str, str] | None = None,
+        client: httpx.Client | None = None,
+    ):
         settings = get_settings()
         self._base_url = base_url or settings.BASE_URL
         self._headers = headers or {
             'Content-Type': 'application/json',
         }
-        self._client = httpx.Client(
+        self._client = client or httpx.Client(
             base_url=self._base_url, headers=self._headers, timeout=10.0
         )
 

@@ -1,30 +1,35 @@
-import pytest
-from trading_bot_mvp.client.base_client import BaseAPIClient, APIRequest
+from unittest.mock import Mock
+
+import httpx
+from httpx import Request, Response
+
+from trading_bot_mvp.client.base_client import APIRequest, BaseAPIClient
 
 
 class DummyAPIClient(BaseAPIClient):
-    def __init__(self):
-        super().__init__(base_url='https://example.com', headers={})
-        self.last_request = None
+    def __init__(self) -> None:
+        mock_client = Mock(spec=httpx.Client)
+        dummy_request = Request('GET', 'https://example.com/test')
+        mock_response = Response(
+            status_code=200,
+            json={'result': 'ok'},
+            headers={'Content-Type': 'application/json'},
+            request=dummy_request,
+        )
+        mock_client.request.return_value = mock_response
+        super().__init__(base_url='https://example.com', headers={}, client=mock_client)
 
-    def request(self, req: APIRequest) -> dict:
-        self.last_request = req
-        return {'result': 'ok'}
 
-
-def test_api_request_fields():
-    req = APIRequest(
-        method='GET', endpoint='/test', json_data={'foo': 'bar'}, params={'baz': 1}
-    )
+def test_api_request_fields() -> None:
+    req = APIRequest(method='GET', endpoint='/test', json_data={'foo': 'bar'}, params={'baz': 1})
     assert req.method == 'GET'
     assert req.endpoint == '/test'
     assert req.json_data == {'foo': 'bar'}
     assert req.params == {'baz': 1}
 
 
-def test_base_api_client_request():
+def test_base_api_client_request() -> None:
     client = DummyAPIClient()
     req = APIRequest(method='GET', endpoint='/test')
     resp = client.request(req)
-    assert resp == {'result': 'ok'}
-    assert client.last_request == req
+    assert resp.json() == {'result': 'ok'}

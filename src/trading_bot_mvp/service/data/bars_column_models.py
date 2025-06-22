@@ -1,6 +1,6 @@
-from typing import Dict
-from pydantic import BaseModel, Field
+import pandas as pd
 import pandera.pandas as pa
+from pydantic import BaseModel, Field
 
 
 class StandardBarsColumns(BaseModel):
@@ -14,22 +14,24 @@ class StandardBarsColumns(BaseModel):
     # Add more standard columns as needed
 
 
-cols = StandardBarsColumns()
+StandardColumns = StandardBarsColumns()
+
+# get the type of index_datatype
 
 
 class BarsSchema(pa.DataFrameModel):
     __annotations__ = {
-        cols.timestamp: pa.typing.Index[pa.Timestamp],
-        cols.open: float,
-        cols.high: float,
-        cols.low: float,
-        cols.close: float,
-        cols.volume: int,
-        cols.symbol: str,
+        StandardColumns.timestamp: pd.DatetimeTZDtype('ns', 'UTC'),
+        StandardColumns.open: float,
+        StandardColumns.high: float,
+        StandardColumns.low: float,
+        StandardColumns.close: float,
+        StandardColumns.volume: int,
+        StandardColumns.symbol: str,
     }
 
 
 class BarsColumnMapping(BaseModel):
-    mapping: Dict[str, str] = Field(
+    mapping: dict[str, str] = Field(
         ..., description='Mapping from standard column names to response column names'
     )

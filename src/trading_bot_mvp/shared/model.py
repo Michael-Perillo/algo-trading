@@ -6,30 +6,23 @@ from __future__ import annotations
 
 from datetime import datetime
 from enum import Enum
-from typing import Dict, Optional, Union
 from uuid import UUID
 
 from pydantic import BaseModel, Field
 
 
 class Account(BaseModel):
-    id: Union[str, UUID] = Field(
-        ..., description='Unique account identifier (string or UUID)'
-    )
-    status: str = Field(
-        ..., description='Account status (e.g., ACTIVE, SUSPENDED, CLOSED)'
-    )
+    id: str | UUID = Field(..., description='Unique account identifier (string or UUID)')
+    status: str = Field(..., description='Account status (e.g., ACTIVE, SUSPENDED, CLOSED)')
     currency: str = Field(..., description='Account currency (e.g., USD)')
     cash: float = Field(..., description='Cash balance')
     equity: float = Field(..., description='Total equity value')
     buying_power: float = Field(..., description='Buying power available')
-    created_at: Optional[datetime] = Field(
-        None, description='Account creation timestamp'
-    )
+    created_at: datetime | None = Field(None, description='Account creation timestamp')
 
 
 class FieldMap(BaseModel):
-    mapping: Dict[str, str] = Field(
+    mapping: dict[str, str] = Field(
         ...,
         description='Dictionary where keys are common model field names and values are the corresponding brokerage API field names.\n',
     )
@@ -54,13 +47,11 @@ class Order(BaseModel):
     side: Side
     type: Type
     qty: float = Field(..., description='Quantity of asset to trade')
-    filled_qty: Optional[float] = Field(None, description='Quantity filled')
+    filled_qty: float | None = Field(None, description='Quantity filled')
     status: str = Field(..., description='Order status (e.g., new, filled, canceled)')
-    price: Optional[float] = Field(
-        None, description='Price per share (for limit/stop orders)'
-    )
-    created_at: Optional[datetime] = None
-    updated_at: Optional[datetime] = None
+    price: float | None = Field(None, description='Price per share (for limit/stop orders)')
+    created_at: datetime | None = None
+    updated_at: datetime | None = None
 
 
 class Side1(Enum):
@@ -77,6 +68,7 @@ class Position(BaseModel):
     side: Side1
 
 
+# todo unify bar model with the one in alpaca_dao.py
 class Bar(BaseModel):
     t: datetime
     o: float
@@ -106,5 +98,5 @@ class Timeframe(Enum):
 class BarRequest(BaseModel):
     symbol: str = Field(..., description='Ticker symbol')
     timeframe: Timeframe = Field(..., description='Timeframe for the bars')
-    start: Optional[datetime] = Field(None, description='Start time for the bar data')
-    end: Optional[datetime] = Field(None, description='End time for the bar data')
+    start: datetime | None = Field(None, description='Start time for the bar data')
+    end: datetime | None = Field(None, description='End time for the bar data')

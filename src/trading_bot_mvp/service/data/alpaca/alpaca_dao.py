@@ -1,15 +1,16 @@
 import pandas as pd
+from pandera.typing.pandas import DataFrame
 
 from trading_bot_mvp.client.alpaca.alpaca_client import AlpacaDataClient
 from trading_bot_mvp.client.alpaca.data_models import StockBarsResp
-from trading_bot_mvp.service.data.base_dao import BaseDAO
+from trading_bot_mvp.client.base_client import BaseAPIClient
 from trading_bot_mvp.service.data.bars_column_models import (
     BarsColumnMapping,
-    StandardBarsColumns,
     BarsSchema,
+    StandardBarsColumns,
 )
+from trading_bot_mvp.service.data.base_dao import BaseDAO
 from trading_bot_mvp.shared.model import BarRequest
-from pandera.typing.pandas import DataFrame
 
 
 class AlpacaDAO(BaseDAO):
@@ -19,7 +20,7 @@ class AlpacaDAO(BaseDAO):
 
     api_client: AlpacaDataClient
 
-    def __init__(self, api_client: AlpacaDataClient = None):
+    def __init__(self, api_client: BaseAPIClient | None = None):
         if api_client is None:
             # Initialize the Alpaca API client if not provided
             api_client = AlpacaDataClient()
@@ -29,32 +30,35 @@ class AlpacaDAO(BaseDAO):
         """
         Fetch bars for a given symbol and timeframe using the Alpaca brokerage service.
         :param request: BarRequest containing parameters for fetching bars.
-        :return: DataFrame with columns matching StandardBarsColumns (timestamp, open, high, low, close, volume, symbol, ...)
+        :return: DataFrame with columns matching StandardBarsColumns
+        (timestamp, open, high, low, close, volume, symbol, ...)
         """
         response = self.api_client.get_bars(
             request.symbol, request.timeframe.value, request.start, request.end
         )
         bars_response_body = StockBarsResp(**response.json())
         bars_dict = bars_response_body.bars
-        if isinstance(bars_dict, dict):
-            all_bars = []
-            for symbol, bars in bars_dict.items():
-                for bar in bars:
-                    bar = dict(bar)  # ensure mutable
-                    bar['symbol'] = symbol
-                    all_bars.append(bar)
-            df = pd.DataFrame(all_bars)
-        else:
-            # fallback for flat list
-            df = pd.DataFrame(bars_dict)
-            df['symbol'] = request.symbol
-        # set the index to the timestamp if present
-        if 't' in df.columns:
-            df.set_index('t', inplace=True)
-            try:
-                df.index = pd.to_datetime(df.index)
-            except Exception:
-                pass
+        all_bars = []
+        for symbol, bars in bars_dict.items():
+            for bar in bars:
+                bar_dict = dict(bar)
+                ts = getattr(bar_dict.get('t'), 'root', None)
+                if ts is None:
+                    ts = bar_dict.get('t')
+                if ts is None:
+                    raise ValueError('Bar timestamp is None and cannot be converted to datetime.')
+                # Ensure ts is str or datetime for pandas
+                if not isinstance(ts, str | pd.Timestamp):
+                    ts = str(ts)
+                pd_ts = (
+                    pd.to_datetime(ts).tz_convert('UTC')
+                    if pd.to_datetime(ts).tzinfo
+                    else pd.to_datetime(ts).tz_localize('UTC')
+                )
+                bar_dict['t'] = pd_ts
+                bar_dict['symbol'] = symbol
+                all_bars.append(bar_dict)
+        df = pd.DataFrame(all_bars)
         # Use the standardize_bars_dataframe method to return the standard layout
         standard_mapping = BarsColumnMapping(
             mapping={

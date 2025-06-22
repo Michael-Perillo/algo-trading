@@ -1,7 +1,7 @@
 from __future__ import annotations
-from typing import Dict
 
-from pydantic import BaseModel, Field
+from pydantic import Field
+
 from trading_bot_mvp.shared.model import FieldMap
 
 
@@ -11,7 +11,7 @@ class AccountFieldMap(FieldMap):
     The keys are the common model field names, and the values are the Alpaca API field names.
     """
 
-    mapping: Dict[str, str] = Field(
+    mapping: dict[str, str] = Field(
         default_factory=lambda: {
             'id': 'id',
             'status': 'status',
