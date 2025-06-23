@@ -1,14 +1,11 @@
 import pandas as pd
 from pandera.typing.pandas import DataFrame
 
+from trading_bot_mvp.client.alpaca.adapters import alpaca_bars_column_mapping
 from trading_bot_mvp.client.alpaca.alpaca_client import AlpacaDataClient
 from trading_bot_mvp.client.alpaca.data_models import StockBarsResp
 from trading_bot_mvp.client.base_client import BaseAPIClient
-from trading_bot_mvp.service.data.bars_column_models import (
-    BarsColumnMapping,
-    BarsSchema,
-    StandardBarsColumns,
-)
+from trading_bot_mvp.service.data.bars_column_models import BarsSchema
 from trading_bot_mvp.service.data.base_dao import BaseDAO
 from trading_bot_mvp.shared.model import BarRequest
 
@@ -59,16 +56,4 @@ class AlpacaDAO(BaseDAO):
                 bar_dict['symbol'] = symbol
                 all_bars.append(bar_dict)
         df = pd.DataFrame(all_bars)
-        # Use the standardize_bars_dataframe method to return the standard layout
-        standard_mapping = BarsColumnMapping(
-            mapping={
-                't': StandardBarsColumns().timestamp,
-                'o': StandardBarsColumns().open,
-                'h': StandardBarsColumns().high,
-                'l': StandardBarsColumns().low,
-                'c': StandardBarsColumns().close,
-                'v': StandardBarsColumns().volume,
-                'symbol': StandardBarsColumns().symbol,
-            }
-        )
-        return self.standardize_bars_dataframe(df, standard_mapping)
+        return self.standardize_bars_dataframe(df, alpaca_bars_column_mapping())

@@ -2,7 +2,6 @@ import pytest
 from pydantic import BaseModel
 
 from trading_bot_mvp.service.base_service import BaseService
-from trading_bot_mvp.shared.model import FieldMap
 
 
 class DummyModel(BaseModel):
@@ -17,6 +16,7 @@ class TargetModel(BaseModel):
 
 class DummyService(BaseService):
     def __init__(self) -> None:
+        super().__init__(api_client=None)
         pass
 
 
@@ -25,8 +25,7 @@ def dummy_service() -> DummyService:
     return DummyService()
 
 
-def test_map_model_identity(dummy_service: DummyService) -> None:
-    src = DummyModel(foo='hello', bar=42)
-    tgt = dummy_service.map_model(src, TargetModel, FieldMap(mapping={'baz': 'foo', 'qux': 'bar'}))
-    assert tgt.baz == 'hello'
-    assert tgt.qux == 42
+def test_base_service(dummy_service: DummyService) -> None:
+    service = dummy_service
+    assert isinstance(service, DummyService)
+    assert service.api_client is None

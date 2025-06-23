@@ -8,7 +8,7 @@ from trading_bot_mvp.service.base_service import BaseService
 from trading_bot_mvp.service.data.bars_column_models import (
     BarsColumnMapping,
     BarsSchema,
-    StandardColumns,
+    StandardBarsColumns,
 )
 from trading_bot_mvp.shared.model import BarRequest
 
@@ -38,12 +38,12 @@ class BaseDAO(BaseService, ABC):
         :param column_mapping: object mapping response column names to standard names.
         :return: DataFrame with standardized columns.
         """
-        standardized_df = df.rename(columns=column_mapping.mapping)
+        standardized_df = df.rename(columns=column_mapping.as_rename_dict())
         # Ensure is set to the timestamp column is datetime if it exists
-        if StandardColumns.timestamp in standardized_df.columns:
+        if StandardBarsColumns.timestamp in standardized_df.columns:
             try:
-                standardized_df[StandardColumns.timestamp] = pd.to_datetime(
-                    standardized_df[StandardColumns.timestamp], utc=True
+                standardized_df[StandardBarsColumns.timestamp] = pd.to_datetime(
+                    standardized_df[StandardBarsColumns.timestamp], utc=True
                 )
             except Exception:
                 print(f'Failed to convert timestamp to datetime: {standardized_df.index}')

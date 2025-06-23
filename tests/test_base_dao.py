@@ -1,11 +1,8 @@
 import pandas as pd
 from pandera.typing.pandas import DataFrame
 
-from trading_bot_mvp.service.data.bars_column_models import (
-    BarsColumnMapping,
-    BarsSchema,
-    StandardBarsColumns,
-)
+from trading_bot_mvp.client.alpaca.adapters import alpaca_bars_column_mapping as standard_mapping
+from trading_bot_mvp.service.data.bars_column_models import BarsSchema
 from trading_bot_mvp.service.data.base_dao import BaseDAO
 from trading_bot_mvp.shared.mocks import mocks
 from trading_bot_mvp.shared.mocks.mocks import DummyAPIClient
@@ -39,18 +36,8 @@ class DummyDAO(BaseDAO):
                 },
             ]
         )
-        standard_mapping = BarsColumnMapping(
-            mapping={
-                't': StandardBarsColumns().timestamp,
-                'o': StandardBarsColumns().open,
-                'h': StandardBarsColumns().high,
-                'l': StandardBarsColumns().low,
-                'c': StandardBarsColumns().close,
-                'v': StandardBarsColumns().volume,
-                'symbol': StandardBarsColumns().symbol,
-            }
-        )
-        return self.standardize_bars_dataframe(raw_df, standard_mapping)
+
+        return self.standardize_bars_dataframe(raw_df, standard_mapping())
 
 
 bar_request = BarRequest(symbol='AAPL', timeframe=Timeframe.field_1D, start=None, end=None)

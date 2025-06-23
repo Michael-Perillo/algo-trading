@@ -1,4 +1,4 @@
-import trading_bot_mvp.client.alpaca.api_field_mappings.model as alpaca_field_mappings
+import trading_bot_mvp.client.alpaca.adapters as alpaca_adapters
 from trading_bot_mvp.client.alpaca.alpaca_client import AlpacaAPIClient
 from trading_bot_mvp.client.alpaca.trading_models import (
     Account as AlpacaAccountResponseBody,
@@ -24,9 +24,7 @@ class AlpacaBrokerageService(BaseBrokerageService):
     def get_account(self) -> Account:
         response = self.api_client.get_account()
         account_response_body = AlpacaAccountResponseBody(**response.json())
-        return self.map_model(
-            account_response_body, Account, alpaca_field_mappings.AccountFieldMap()
-        )
+        return alpaca_adapters.account_from_alpaca(account_response_body)
 
     def get_open_positions(self, symbol: str | None = None) -> list[Position]:
         """
@@ -34,25 +32,21 @@ class AlpacaBrokerageService(BaseBrokerageService):
         :param symbol: Optional symbol to filter positions by.
         :return: List of open positions.
         """
-        response = self.api_client.get_open_positions(symbol=symbol)
+        positions = []
         if symbol:
+            return [self.get_open_position(symbol)]
             # If a symbol is provided, we expect a single position response
-            position_response_body = AlpacaPositionResponseBody(**response.json())
-            positions = [
-                self.map_model(
-                    position_response_body, Position, alpaca_field_mappings.PositionFieldMap()
-                )
-            ]
         else:
-            positions = [
-                self.map_model(
-                    AlpacaPositionResponseBody(**position),
-                    Position,
-                    alpaca_field_mappings.PositionFieldMap(),
-                )
-                for position in response.json()
-            ]
+            response = self.api_client.get_open_positions()
+            for position in response.json():
+                position_response_body = AlpacaPositionResponseBody(**position)
+                positions.append(alpaca_adapters.position_from_alpaca(position_response_body))
         return positions
+
+    def get_open_position(self, symbol: str) -> Position:
+        response = self.api_client.get_open_positions(symbol=symbol)
+        position_response_body = AlpacaPositionResponseBody(**response.json())
+        return alpaca_adapters.position_from_alpaca(position_response_body)
 
     def place_order(self, order_request: OrderRequest) -> OrderResponse:
         # todo implement order response model
@@ -63,4 +57,4 @@ class AlpacaBrokerageService(BaseBrokerageService):
         """
         # response = self.api_client.place_order(order_request)
         # order_response_body = AlpacaOrderResponseBody(**response.json())
-        return OrderResponse(symbol=order_request.symbol)
+        return OrderResponse(id=order_request.symbol)

@@ -1,37 +1,41 @@
+from enum import Enum
+
 import pandas as pd
 import pandera.pandas as pa
-from pydantic import BaseModel, Field
+from pydantic import BaseModel
 
 
-class StandardBarsColumns(BaseModel):
-    timestamp: str = Field(default='timestamp', description='Timestamp column name')
-    open: str = Field(default='open', description='Open price column name')
-    high: str = Field(default='high', description='High price column name')
-    low: str = Field(default='low', description='Low price column name')
-    close: str = Field(default='close', description='Close price column name')
-    volume: str = Field(default='volume', description='Volume column name')
-    symbol: str = Field(default='symbol', description='Symbol column name')
-    # Add more standard columns as needed
+class StandardBarsColumns(str, Enum):
+    timestamp = 'timestamp'
+    open = 'open'
+    high = 'high'
+    low = 'low'
+    close = 'close'
+    volume = 'volume'
+    symbol = 'symbol'
 
 
-StandardColumns = StandardBarsColumns()
+class BarsColumnMapping(BaseModel):
+    timestamp: str
+    open: str
+    high: str
+    low: str
+    close: str
+    volume: str
+    symbol: str
 
-# get the type of index_datatype
+    def as_rename_dict(self) -> dict[str, str]:
+        # For use with pandas.DataFrame.rename(columns=...)
+        return {v: k for k, v in self.model_dump().items()}
 
 
 class BarsSchema(pa.DataFrameModel):
     __annotations__ = {
-        StandardColumns.timestamp: pd.DatetimeTZDtype('ns', 'UTC'),
-        StandardColumns.open: float,
-        StandardColumns.high: float,
-        StandardColumns.low: float,
-        StandardColumns.close: float,
-        StandardColumns.volume: int,
-        StandardColumns.symbol: str,
+        StandardBarsColumns.timestamp: pd.DatetimeTZDtype('ns', 'UTC'),
+        StandardBarsColumns.open: float,
+        StandardBarsColumns.high: float,
+        StandardBarsColumns.low: float,
+        StandardBarsColumns.close: float,
+        StandardBarsColumns.volume: int,
+        StandardBarsColumns.symbol: str,
     }
-
-
-class BarsColumnMapping(BaseModel):
-    mapping: dict[str, str] = Field(
-        ..., description='Mapping from standard column names to response column names'
-    )
