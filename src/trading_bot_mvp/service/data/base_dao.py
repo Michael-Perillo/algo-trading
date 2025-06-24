@@ -3,8 +3,7 @@ from abc import ABC, abstractmethod
 import pandas as pd
 from pandera.typing.pandas import DataFrame
 
-from trading_bot_mvp.client.base_client import BaseAPIClient
-from trading_bot_mvp.service.base_service import BaseService
+from trading_bot_mvp.service.base_service import BaseService, GeneratedAPIClient
 from trading_bot_mvp.service.data.bars_column_models import (
     BarsColumnMapping,
     BarsSchema,
@@ -18,7 +17,7 @@ class BaseDAO(BaseService, ABC):
     Abstract base DAO class for data access. Optionally takes a baseAPIclient for API interaction.
     """
 
-    def __init__(self, api_client: BaseAPIClient | None = None) -> None:
+    def __init__(self, api_client: GeneratedAPIClient | None = None) -> None:
         self.api_client = api_client
 
     @abstractmethod

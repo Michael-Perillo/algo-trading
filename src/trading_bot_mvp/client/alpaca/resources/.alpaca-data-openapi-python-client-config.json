@@ -1,0 +1,8 @@
+{
+  "package_name": "alpaca_data",
+  "project_name": "Alpaca Data Client",
+  "class_overrides": {},
+  "field_overrides": {},
+  "use_path_prefixes_for_title_model_names": true,
+  "post_hooks": []
+}

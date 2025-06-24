@@ -247,12 +247,20 @@ components:
           description: Timeframe for the bars
         start:
           type: string
-          format: date-time
+          format: date
           description: Start time for the bar data
         end:
           type: string
-          format: date-time
+          format: date
           description: End time for the bar data
       required:
         - symbol
         - timeframe
+
+    OrderResponse:
+      type: object
+      description: Request parameters for fetching OHLCV bars
+      properties:
+        id:
+          type: string
+          description: Order identifier

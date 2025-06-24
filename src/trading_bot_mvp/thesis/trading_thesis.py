@@ -49,8 +49,7 @@ class TradingThesis(BaseModel):
                 print(f'No data for {asset}, skipping.')
                 continue
 
-            signals_df = self.strategy.generate_signals(bars_df)
-            latest_signal = signals_df['signal'].iloc[-1]
+            latest_signal = self.strategy.generate_signal(bars_df)
             latest_price = bars_df['close'].iloc[-1]
             current_position = positions.get(asset)
 
@@ -61,15 +60,15 @@ class TradingThesis(BaseModel):
                 )
                 stop_loss_price = latest_price * (1 - self.risk_management.stop_loss_percentage)
                 risk_per_share = latest_price - stop_loss_price
-
-                if risk_per_share <= 0:
-                    continue
-
+                #
+                # if risk_per_share <= 0:
+                #     continue
+                #
                 qty = trade_risk_capital // risk_per_share
-
-                if qty == 0:
-                    print(f'[{self.thesis_name}] Not enough capital to place trade for {asset}.')
-                    continue
+                #
+                # if qty == 0:
+                #     print(f'[{self.thesis_name}] Not enough capital to place trade for {asset}.')
+                #     continue
 
                 orders.append(
                     OrderRequest(

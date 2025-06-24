@@ -1,29 +1,33 @@
 import trading_bot_mvp.client.alpaca.adapters as alpaca_adapters
-from trading_bot_mvp.client.alpaca.alpaca_client import AlpacaAPIClient
-from trading_bot_mvp.client.alpaca.trading_models import (
-    Account as AlpacaAccountResponseBody,
+from trading_bot_mvp.client.alpaca.generated.alpaca_trading.api.accounts.get_account import (
+    sync as get_account,
 )
-from trading_bot_mvp.client.alpaca.trading_models import (
-    Position as AlpacaPositionResponseBody,
+from trading_bot_mvp.client.alpaca.generated.alpaca_trading.api.positions.get_all_open_positions import (  # noqa: E501
+    sync as get_all_open_positions,
 )
-from trading_bot_mvp.service.brokerage.base_brokerage_service import (
-    BaseBrokerageService,
+from trading_bot_mvp.client.alpaca.generated.alpaca_trading.api.positions.get_open_position import (
+    sync as get_open_position,
 )
+from trading_bot_mvp.client.alpaca.generated.alpaca_trading.client import (
+    Client as AlpacaAPIClient,
+)
+from trading_bot_mvp.client.client_factory import get_alpaca_trading_client
+from trading_bot_mvp.service.brokerage.base_brokerage_service import BaseBrokerageService
 from trading_bot_mvp.shared.model import Account, OrderRequest, OrderResponse, Position
 
 
 class AlpacaBrokerageService(BaseBrokerageService):
-    api_client: AlpacaAPIClient
-
     def __init__(self, api_client: AlpacaAPIClient | None = None):
+        self.api_client: AlpacaAPIClient
         if api_client is None:
             # Initialize the Alpaca API client if not provided
-            api_client = AlpacaAPIClient()
+            api_client = get_alpaca_trading_client()
         super().__init__(api_client)
 
     def get_account(self) -> Account:
-        response = self.api_client.get_account()
-        account_response_body = AlpacaAccountResponseBody(**response.json())
+        account_response_body = get_account(client=self.api_client)
+        if account_response_body is None:
+            raise ValueError('Failed to fetch account information from Alpaca.')
         return alpaca_adapters.account_from_alpaca(account_response_body)
 
     def get_open_positions(self, symbol: str | None = None) -> list[Position]:
@@ -32,21 +36,24 @@ class AlpacaBrokerageService(BaseBrokerageService):
         :param symbol: Optional symbol to filter positions by.
         :return: List of open positions.
         """
-        positions = []
-        if symbol:
+        positions: list[Position] = []
+        if symbol is not None:
             return [self.get_open_position(symbol)]
-            # If a symbol is provided, we expect a single position response
-        else:
-            response = self.api_client.get_open_positions()
-            for position in response.json():
-                position_response_body = AlpacaPositionResponseBody(**position)
-                positions.append(alpaca_adapters.position_from_alpaca(position_response_body))
+        all_open_positions = get_all_open_positions(client=self.api_client)
+        if all_open_positions is None:
+            raise ValueError('Failed to fetch open positions from Alpaca.')
+        for position in all_open_positions:
+            position_response_body = alpaca_adapters.position_from_alpaca(position)
+            positions.append(position_response_body)
         return positions
 
     def get_open_position(self, symbol: str) -> Position:
-        response = self.api_client.get_open_positions(symbol=symbol)
-        position_response_body = AlpacaPositionResponseBody(**response.json())
-        return alpaca_adapters.position_from_alpaca(position_response_body)
+        open_position_response = get_open_position(
+            client=self.api_client, symbol_or_asset_id=symbol
+        )
+        if open_position_response is None:
+            raise ValueError(f'Failed to fetch open position for symbol: {symbol}')
+        return alpaca_adapters.position_from_alpaca(open_position_response)
 
     def place_order(self, order_request: OrderRequest) -> OrderResponse:
         # todo implement order response model

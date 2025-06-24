@@ -1,11 +1,10 @@
 from abc import ABC
-from typing import TypeVar
+from typing import Protocol
 
-from pydantic import BaseModel
 
-from trading_bot_mvp.client.base_client import BaseAPIClient
-
-GenericBaseModel = TypeVar('GenericBaseModel', bound=BaseModel)
+class GeneratedAPIClient(Protocol):
+    # Mainly for type hinting
+    pass
 
 
 class BaseService(ABC):
@@ -14,5 +13,5 @@ class BaseService(ABC):
     Subclasses should implement domain-specific logic and response parsing.
     """
 
-    def __init__(self, api_client: BaseAPIClient | None = None):
+    def __init__(self, api_client: GeneratedAPIClient | None = None):
         self.api_client = api_client

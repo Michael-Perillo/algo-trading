@@ -1,8 +1,10 @@
 from abc import ABC, abstractmethod
 from enum import Enum
 
-import pandas as pd
+from pandera.typing.pandas import DataFrame
 from pydantic import BaseModel
+
+from trading_bot_mvp.service.data.bars_column_models import BarsSchema
 
 
 class Signal(Enum):
@@ -24,7 +26,7 @@ class BaseStrategy(ABC, BaseModel):
     strategy_name: str
 
     @abstractmethod
-    def generate_signals(self, bars: pd.DataFrame) -> pd.DataFrame:
+    def generate_signal(self, bars: DataFrame[BarsSchema]) -> Signal:
         """
         Generates trading signals for a given set of historical bars.
 
