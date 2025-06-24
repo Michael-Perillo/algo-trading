@@ -1,10 +1,20 @@
+from typing import Any
+
 import pandas as pd
 from pandera.typing.pandas import DataFrame
 
 from trading_bot_mvp.client.alpaca.adapters import alpaca_bars_column_mapping
-from trading_bot_mvp.client.alpaca.alpaca_client import AlpacaDataClient
-from trading_bot_mvp.client.alpaca.data_models import StockBarsResp
-from trading_bot_mvp.client.base_client import BaseAPIClient
+from trading_bot_mvp.client.alpaca.generated.alpaca_data.api.stock.stock_bars import (
+    sync as get_stock_bars,
+)
+from trading_bot_mvp.client.alpaca.generated.alpaca_data.client import (
+    Client as AlpacaDataClient,
+)
+from trading_bot_mvp.client.alpaca.generated.alpaca_data.models.stock_bars_resp import (
+    StockBarsResp,
+)
+from trading_bot_mvp.client.alpaca.generated.alpaca_data.types import UNSET
+from trading_bot_mvp.client.client_factory import get_alpaca_data_client
 from trading_bot_mvp.service.data.bars_column_models import BarsSchema
 from trading_bot_mvp.service.data.base_dao import BaseDAO
 from trading_bot_mvp.shared.model import BarRequest
@@ -15,12 +25,11 @@ class AlpacaDAO(BaseDAO):
     Data Access Object for Alpaca brokerage, using AlpacaExecutionService for API operations.
     """
 
-    api_client: AlpacaDataClient
-
-    def __init__(self, api_client: BaseAPIClient | None = None):
+    def __init__(self, api_client: AlpacaDataClient | None = None):
+        self.api_client: AlpacaDataClient
         if api_client is None:
             # Initialize the Alpaca API client if not provided
-            api_client = AlpacaDataClient()
+            api_client = get_alpaca_data_client()
         super().__init__(api_client)
 
     def get_bars(self, request: BarRequest) -> DataFrame[BarsSchema]:
@@ -30,11 +39,23 @@ class AlpacaDAO(BaseDAO):
         :return: DataFrame with columns matching StandardBarsColumns
         (timestamp, open, high, low, close, volume, symbol, ...)
         """
-        response = self.api_client.get_bars(
-            request.symbol, request.timeframe.value, request.start, request.end
+
+        bars_response_body = get_stock_bars(
+            client=self.api_client,
+            symbols=request.symbol,
+            timeframe=request.timeframe.value,
+            start=request.start if request.start is not None else UNSET,
+            end=request.end if request.end is not None else UNSET,
         )
-        bars_response_body = StockBarsResp(**response.json())
-        bars_dict = bars_response_body.bars
+        if bars_response_body is None:
+            raise ValueError('Failed to fetch bars from Alpaca. Response body is None.')
+
+        return self.standardize_bars_dataframe(
+            self.parse_bars_response(bars_response_body), alpaca_bars_column_mapping()
+        )
+
+    def parse_bars_response(self, bars_response_body: StockBarsResp) -> DataFrame[Any]:
+        bars_dict = bars_response_body.bars.to_dict()
         all_bars = []
         for symbol, bars in bars_dict.items():
             for bar in bars:
@@ -55,5 +76,4 @@ class AlpacaDAO(BaseDAO):
                 bar_dict['t'] = pd_ts
                 bar_dict['symbol'] = symbol
                 all_bars.append(bar_dict)
-        df = pd.DataFrame(all_bars)
-        return self.standardize_bars_dataframe(df, alpaca_bars_column_mapping())
+        return DataFrame(pd.DataFrame(all_bars))

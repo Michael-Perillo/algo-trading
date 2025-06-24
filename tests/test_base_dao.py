@@ -1,17 +1,18 @@
+from unittest.mock import MagicMock
+
 import pandas as pd
+import pytest
 from pandera.typing.pandas import DataFrame
 
 from trading_bot_mvp.client.alpaca.adapters import alpaca_bars_column_mapping as standard_mapping
 from trading_bot_mvp.service.data.bars_column_models import BarsSchema
 from trading_bot_mvp.service.data.base_dao import BaseDAO
-from trading_bot_mvp.shared.mocks import mocks
-from trading_bot_mvp.shared.mocks.mocks import DummyAPIClient
 from trading_bot_mvp.shared.model import BarRequest, Timeframe
 
 
 class DummyDAO(BaseDAO):
-    def __init__(self, api_client: DummyAPIClient = mocks.DummyAPIClient()):
-        super().__init__(api_client)
+    def __init__(self, api_client: None = None) -> None:
+        super().__init__(MagicMock())
 
     def get_bars(self, request: BarRequest) -> DataFrame[BarsSchema]:
         raw_df = pd.DataFrame(
@@ -36,30 +37,54 @@ class DummyDAO(BaseDAO):
                 },
             ]
         )
-
         return self.standardize_bars_dataframe(raw_df, standard_mapping())
 
 
-bar_request = BarRequest(symbol='AAPL', timeframe=Timeframe.field_1D, start=None, end=None)
+@pytest.fixture
+def dummy_dao() -> DummyDAO:
+    return DummyDAO()
 
 
-def test_standardize_bars_dataframe() -> None:
-    # Define a mapping from standard to desired output columns (e.g., 'timestamp', 'open', ...)
-    dao = DummyDAO()
-    std_df = dao.get_bars(bar_request)
-    # Assert columns are renamed to the new standard
-    assert list(std_df.columns) == [
-        'timestamp',
-        'open',
-        'high',
-        'low',
-        'close',
-        'volume',
-        'symbol',
-    ]
-    # Assert data is preserved
-    # check the index
+@pytest.fixture
+def bar_request() -> BarRequest:
+    return BarRequest(symbol='AAPL', timeframe=Timeframe.field_1D, start=None, end=None)
+
+
+def test_standardize_bars_dataframe(dummy_dao: DummyDAO, bar_request: BarRequest) -> None:
+    std_df = dummy_dao.get_bars(bar_request)
+    assert list(std_df.columns) == ['timestamp', 'open', 'high', 'low', 'close', 'volume', 'symbol']
     assert std_df.iloc[0]['timestamp'] == pd.to_datetime('2022-01-03T09:00:00Z')
     assert std_df.iloc[0]['open'] == 100.0
     assert std_df.iloc[1]['close'] == 110.0
     assert std_df.iloc[1]['symbol'] == 'AAPL'
+
+
+def test_standardize_bars_dataframe_missing_column(dummy_dao: DummyDAO) -> None:
+    # Remove 't' column to simulate missing timestamp
+    raw_df = pd.DataFrame(
+        [
+            {'o': 100.0, 'h': 110.0, 'l': 90.0, 'c': 105.0, 'v': 1000, 'symbol': 'AAPL'},
+        ]
+    )
+    with pytest.raises(Exception):
+        dummy_dao.standardize_bars_dataframe(raw_df, standard_mapping())
+
+
+def test_standardize_bars_dataframe_invalid_timestamp(dummy_dao: DummyDAO) -> None:
+    # Provide an invalid timestamp
+    raw_df = pd.DataFrame(
+        [
+            {
+                't': 'not-a-date',
+                'o': 100.0,
+                'h': 110.0,
+                'l': 90.0,
+                'c': 105.0,
+                'v': 1000,
+                'symbol': 'AAPL',
+            },
+        ]
+    )
+    # Should print a warning and raise on schema validation
+    with pytest.raises(Exception):
+        dummy_dao.standardize_bars_dataframe(raw_df, standard_mapping())

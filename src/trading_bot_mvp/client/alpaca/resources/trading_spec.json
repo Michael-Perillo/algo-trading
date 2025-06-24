@@ -3202,7 +3202,7 @@
       "OrderLeg": {
         "description": "This is copy of Order response schemas as a workaround of displaying issue of nested Order recursively for legs",
         "type": "object",
-        "title": "Order",
+        "title": "OrderLeg",
         "properties": {
           "id": {
             "type": "string",
@@ -3336,7 +3336,8 @@
           "legs": {
             "type": "array",
             "description": "When querying non-simple order_class orders in a nested style, an array of Order entities associated with this order. Otherwise, null.",
-            "nullable": true
+            "nullable": true,
+            "items": { "type": "object" }
           },
           "trail_percent": {
             "type": "string",
@@ -4049,7 +4050,7 @@
             "name": "Primary Watchlist"
           }
         },
-        "title": "Watchlist",
+        "title": "WatchlistWithoutAsset",
         "properties": {
           "id": {
             "type": "string",

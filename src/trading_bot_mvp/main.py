@@ -1,4 +1,4 @@
-import pandas as pd
+from datetime import date
 
 from trading_bot_mvp.service.brokerage.alpaca.alpaca_brokerage_service import (
     AlpacaBrokerageService,
@@ -18,12 +18,11 @@ if __name__ == '__main__':
 
     # Get bars for a symbol
     print('\n--- Bars Data ---')
-    # todo fix the request issue with start and end dates
     bar_request = BarRequest(
         symbol='AAPL',
         timeframe=Timeframe.field_1D,
-        start=pd.to_datetime('2023-01-01'),
-        end=pd.to_datetime('2023-02-01'),
+        start=date(2023, 1, 1),
+        end=date(2023, 2, 1),
     )
     bars_df = alpaca_dao.get_bars(bar_request)
     print(bars_df.head())

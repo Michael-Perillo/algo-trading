@@ -1,7 +1,6 @@
 from abc import ABC, abstractmethod
 
-from trading_bot_mvp.client.base_client import BaseAPIClient
-from trading_bot_mvp.service.base_service import BaseService
+from trading_bot_mvp.service.base_service import BaseService, GeneratedAPIClient
 from trading_bot_mvp.shared.model import Account, OrderRequest, OrderResponse, Position
 
 
@@ -11,7 +10,7 @@ class BaseBrokerageService(BaseService, ABC):
     Optionally takes a baseAPIclient for API interaction.
     """
 
-    def __init__(self, api_client: BaseAPIClient | None = None) -> None:
+    def __init__(self, api_client: GeneratedAPIClient | None = None) -> None:
         self.api_client = api_client
 
     @abstractmethod

@@ -4368,7 +4368,9 @@
             "$ref": "#/components/schemas/CACorporateActions"
           },
           "next_page_token": {
-            "$ref": "#/components/schemas/NextPageToken"
+                    "type": "string",
+        "description": "Pagination token for next page.",
+        "nullable": true
           }
         },
         "required": [
@@ -4900,7 +4902,9 @@
             }
           },
           "next_page_token": {
-            "$ref": "#/components/schemas/NextPageToken"
+                    "type": "string",
+        "description": "Pagination token for next page.",
+        "nullable": true
           }
         },
         "required": [
@@ -5109,7 +5113,9 @@
             }
           },
           "next_page_token": {
-            "$ref": "#/components/schemas/NextPageToken"
+                    "type": "string",
+        "description": "Pagination token for next page.",
+        "nullable": true
           }
         },
         "required": [
@@ -5211,7 +5217,9 @@
             }
           },
           "next_page_token": {
-            "$ref": "#/components/schemas/NextPageToken"
+                    "type": "string",
+        "description": "Pagination token for next page.",
+        "nullable": true
           }
         },
         "required": [
@@ -5295,7 +5303,9 @@
             }
           },
           "next_page_token": {
-            "$ref": "#/components/schemas/NextPageToken"
+                    "type": "string",
+        "description": "Pagination token for next page.",
+        "nullable": true
           }
         },
         "required": [
@@ -5419,7 +5429,9 @@
             }
           },
           "next_page_token": {
-            "$ref": "#/components/schemas/NextPageToken"
+                    "type": "string",
+        "description": "Pagination token for next page.",
+        "nullable": true
           }
         },
         "required": [
@@ -5516,7 +5528,9 @@
             }
           },
           "next_page_token": {
-            "$ref": "#/components/schemas/NextPageToken"
+                    "type": "string",
+        "description": "Pagination token for next page.",
+        "nullable": true
           },
           "currency": {
             "type": "string"
@@ -5565,7 +5579,9 @@
         ]
       },
       "OptionNextPageToken": {
-        "$ref": "#/components/schemas/NextPageToken"
+                "type": "string",
+        "description": "Pagination token for next page.",
+        "nullable": true
       },
       "OptionQuote": {
         "type": "object",
@@ -5704,7 +5720,9 @@
             }
           },
           "next_page_token": {
-            "$ref": "#/components/schemas/NextPageToken"
+                    "type": "string",
+        "description": "Pagination token for next page.",
+        "nullable": true
           }
         },
         "required": [
@@ -5772,7 +5790,9 @@
             "type": "string"
           },
           "next_page_token": {
-            "$ref": "#/components/schemas/NextPageToken"
+                    "type": "string",
+        "description": "Pagination token for next page.",
+        "nullable": true
           }
         },
         "required": [
@@ -5992,7 +6012,9 @@
             "type": "string"
           },
           "next_page_token": {
-            "$ref": "#/components/schemas/NextPageToken"
+                    "type": "string",
+        "description": "Pagination token for next page.",
+        "nullable": true
           }
         },
         "required": [
@@ -6016,7 +6038,9 @@
             "type": "string"
           },
           "next_page_token": {
-            "$ref": "#/components/schemas/NextPageToken"
+                    "type": "string",
+        "description": "Pagination token for next page.",
+        "nullable": true
           }
         },
         "required": [
@@ -6109,7 +6133,9 @@
             }
           },
           "next_page_token": {
-            "$ref": "#/components/schemas/NextPageToken"
+                    "type": "string",
+        "description": "Pagination token for next page.",
+        "nullable": true
           },
           "currency": {
             "type": "string"
@@ -6136,7 +6162,9 @@
             "type": "string"
           },
           "next_page_token": {
-            "$ref": "#/components/schemas/NextPageToken"
+                    "type": "string",
+        "description": "Pagination token for next page.",
+        "nullable": true
           }
         },
         "required": [
@@ -6418,7 +6446,9 @@
             "type": "string"
           },
           "next_page_token": {
-            "$ref": "#/components/schemas/NextPageToken"
+                    "type": "string",
+        "description": "Pagination token for next page.",
+        "nullable": true
           }
         },
         "required": [
@@ -6442,7 +6472,9 @@
             "type": "string"
           },
           "next_page_token": {
-            "$ref": "#/components/schemas/NextPageToken"
+                    "type": "string",
+        "description": "Pagination token for next page.",
+        "nullable": true
           }
         },
         "required": [
@@ -6592,7 +6624,9 @@
             "type": "string"
           },
           "next_page_token": {
-            "$ref": "#/components/schemas/NextPageToken"
+                    "type": "string",
+        "description": "Pagination token for next page.",
+        "nullable": true
           }
         },
         "required": [
@@ -6613,7 +6647,9 @@
             }
           },
           "next_page_token": {
-            "$ref": "#/components/schemas/NextPageToken"
+                    "type": "string",
+        "description": "Pagination token for next page.",
+        "nullable": true
           },
           "currency": {
             "type": "string"
