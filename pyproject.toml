@@ -79,7 +79,8 @@ generate_clients = "./scripts/generate_clients.sh"
 
 [tool.coverage.run]
 omit = [
-    "src/trading_bot_mvp/client/alpaca/generated/*"
+    "src/trading_bot_mvp/client/alpaca/generated/*", # Exclude generated files from coverage
+    "src/trading_bot_mvp/main.py", # Exclude main.py from coverage (essentially a script)
 ]
 
 [dependency-groups]
