@@ -4,21 +4,21 @@ from uuid import UUID
 import pandas as pd
 import pytest
 
-from trading_bot_mvp.client.alpaca.generated.alpaca_trading.models.account import (
+from client.alpaca.generated.alpaca_trading.models.account import (
     Account as AlpacaAccount,
 )
-from trading_bot_mvp.client.alpaca.generated.alpaca_trading.models.account_status import (
+from client.alpaca.generated.alpaca_trading.models.account_status import (
     AccountStatus as AlpacaAccountStatus,
 )
-from trading_bot_mvp.client.alpaca.generated.alpaca_trading.models.asset_class import AssetClass
-from trading_bot_mvp.client.alpaca.generated.alpaca_trading.models.exchange import Exchange
-from trading_bot_mvp.client.alpaca.generated.alpaca_trading.models.position import (
+from client.alpaca.generated.alpaca_trading.models.asset_class import AssetClass
+from client.alpaca.generated.alpaca_trading.models.exchange import Exchange
+from client.alpaca.generated.alpaca_trading.models.position import (
     Position as AlpacaPosition,
 )
-from trading_bot_mvp.service.brokerage.alpaca.alpaca_brokerage_service import (
+from service.brokerage.alpaca.alpaca_brokerage_service import (
     AlpacaBrokerageService,
 )
-from trading_bot_mvp.shared.model import Account, Position
+from shared.model import Account, Position
 
 
 @pytest.fixture
@@ -38,7 +38,7 @@ def test_get_account_maps_fields(alpaca_service: AlpacaBrokerageService) -> None
         created_at=pd.to_datetime('2025-06-20T00:00:00Z'),
     )
     with patch(
-        'trading_bot_mvp.service.brokerage.alpaca.alpaca_brokerage_service.get_account',
+        'service.brokerage.alpaca.alpaca_brokerage_service.get_account',
         return_value=mock_account_response,
     ):
         account = alpaca_service.get_account()
@@ -74,7 +74,7 @@ def test_get_open_positions_single_symbol(alpaca_service: AlpacaBrokerageService
         asset_marginable=False,
     )
     with patch(
-        'trading_bot_mvp.service.brokerage.alpaca.alpaca_brokerage_service.get_open_position',
+        'service.brokerage.alpaca.alpaca_brokerage_service.get_open_position',
         return_value=mock_position_response,
     ):
         positions = alpaca_service.get_open_positions(symbol='AAPL')
@@ -126,7 +126,7 @@ def test_get_open_positions_all(alpaca_service: AlpacaBrokerageService) -> None:
         asset_marginable=False,
     )
     with patch(
-        'trading_bot_mvp.service.brokerage.alpaca.alpaca_brokerage_service.get_all_open_positions',
+        'service.brokerage.alpaca.alpaca_brokerage_service.get_all_open_positions',
         return_value=[mock_position_response1, mock_position_response2],
     ):
         positions = alpaca_service.get_open_positions()

@@ -2,12 +2,12 @@ from unittest.mock import MagicMock
 
 import pytest
 
-from trading_bot_mvp.orchestrator import Orchestrator
-from trading_bot_mvp.service.brokerage.base_brokerage_service import BaseBrokerageService
-from trading_bot_mvp.service.data.base_dao import BaseDAO
-from trading_bot_mvp.shared.model import OrderRequest
-from trading_bot_mvp.strategy.base_strategy import BaseStrategy
-from trading_bot_mvp.thesis.trading_thesis import RiskManagement, TradingThesis
+from orchestrator import Orchestrator
+from service.brokerage.base_brokerage_service import BaseBrokerageService
+from service.data.base_dao import BaseDAO
+from shared.model import OrderRequest
+from strategy.base_strategy import BaseStrategy
+from thesis.trading_thesis import RiskManagement, TradingThesis
 
 
 class DummyThesis(TradingThesis):

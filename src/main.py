@@ -1,10 +1,10 @@
 from datetime import date
 
-from trading_bot_mvp.service.brokerage.alpaca.alpaca_brokerage_service import (
+from service.brokerage.alpaca.alpaca_brokerage_service import (
     AlpacaBrokerageService,
 )
-from trading_bot_mvp.service.data.alpaca.alpaca_dao import AlpacaDAO
-from trading_bot_mvp.shared.model import BarRequest, Timeframe
+from service.data.alpaca.alpaca_dao import AlpacaDAO
+from shared.model import BarRequest, Timeframe
 
 if __name__ == '__main__':
     # Initialize the Alpaca API client and services

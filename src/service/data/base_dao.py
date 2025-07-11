@@ -3,13 +3,13 @@ from abc import ABC, abstractmethod
 import pandas as pd
 from pandera.typing.pandas import DataFrame
 
-from trading_bot_mvp.service.base_service import BaseService, GeneratedAPIClient
-from trading_bot_mvp.service.data.bars_column_models import (
+from service.base_service import BaseService, GeneratedAPIClient
+from service.data.bars_column_models import (
     BarsColumnMapping,
     BarsSchema,
     StandardBarsColumns,
 )
-from trading_bot_mvp.shared.model import BarRequest
+from shared.model import BarRequest
 
 
 class BaseDAO(BaseService, ABC):

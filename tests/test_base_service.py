@@ -1,7 +1,7 @@
 import pytest
 from pydantic import BaseModel
 
-from trading_bot_mvp.service.base_service import BaseService
+from service.base_service import BaseService
 
 
 class DummyModel(BaseModel):

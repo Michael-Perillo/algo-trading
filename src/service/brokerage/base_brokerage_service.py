@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 
-from trading_bot_mvp.service.base_service import BaseService, GeneratedAPIClient
-from trading_bot_mvp.shared.model import Account, OrderRequest, OrderResponse, Position
+from service.base_service import BaseService, GeneratedAPIClient
+from shared.model import Account, OrderRequest, OrderResponse, Position
 
 
 class BaseBrokerageService(BaseService, ABC):

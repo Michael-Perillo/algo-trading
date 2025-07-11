@@ -1,9 +1,9 @@
 import pandas as pd
 from pandera.typing import DataFrame
 
-from trading_bot_mvp.service.data.bars_column_models import BarsSchema
-from trading_bot_mvp.strategy.base_strategy import Signal
-from trading_bot_mvp.strategy.moving_average_crossover import MovingAverageCrossover
+from service.data.bars_column_models import BarsSchema
+from strategy.base_strategy import Signal
+from strategy.moving_average_crossover import MovingAverageCrossover
 
 
 def make_bars(close_prices: list[int]) -> 'DataFrame[BarsSchema]':

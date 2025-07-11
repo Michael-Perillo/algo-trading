@@ -4,10 +4,10 @@ import pandas as pd
 import pytest
 from pandera.typing.pandas import DataFrame
 
-from trading_bot_mvp.client.alpaca.adapters import alpaca_bars_column_mapping as standard_mapping
-from trading_bot_mvp.service.data.bars_column_models import BarsSchema
-from trading_bot_mvp.service.data.base_dao import BaseDAO
-from trading_bot_mvp.shared.model import BarRequest, Timeframe
+from client.alpaca.adapters import alpaca_bars_column_mapping as standard_mapping
+from service.data.bars_column_models import BarsSchema
+from service.data.base_dao import BaseDAO
+from shared.model import BarRequest, Timeframe
 
 
 class DummyDAO(BaseDAO):

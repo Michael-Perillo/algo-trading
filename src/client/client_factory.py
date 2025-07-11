@@ -1,12 +1,12 @@
 from httpx import Request, Response
 
-from trading_bot_mvp.client.alpaca.generated.alpaca_data.client import (
+from client.alpaca.generated.alpaca_data.client import (
     Client as AlpacaDataClient,
 )
-from trading_bot_mvp.client.alpaca.generated.alpaca_trading.client import (
+from client.alpaca.generated.alpaca_trading.client import (
     Client as AlpacaTradingClient,
 )
-from trading_bot_mvp.client.alpaca.settings import (
+from client.alpaca.settings import (
     get_alpaca_data_settings,
     get_alpaca_trading_settings,
 )

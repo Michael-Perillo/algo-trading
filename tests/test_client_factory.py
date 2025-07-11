@@ -2,7 +2,7 @@ from unittest.mock import patch
 
 import pytest
 
-from trading_bot_mvp.client.client_factory import (
+from client.client_factory import (
     get_alpaca_data_client,
     get_alpaca_trading_client,
 )
@@ -21,10 +21,10 @@ def test_get_alpaca_trading_client_success() -> None:
     settings = make_settings('key', 'secret', 'https://trading.example.com')
     with (
         patch(
-            'trading_bot_mvp.client.client_factory.get_alpaca_trading_settings',
+            'client.client_factory.get_alpaca_trading_settings',
             return_value=settings,
         ),
-        patch('trading_bot_mvp.client.client_factory.AlpacaTradingClient') as MockClient,
+        patch('client.client_factory.AlpacaTradingClient') as MockClient,
     ):
         _ = get_alpaca_trading_client()
         assert MockClient.called
@@ -37,9 +37,7 @@ def test_get_alpaca_trading_client_success() -> None:
 
 def test_get_alpaca_trading_client_missing_keys() -> None:
     settings = make_settings(None, None, 'https://trading.example.com')
-    with patch(
-        'trading_bot_mvp.client.client_factory.get_alpaca_trading_settings', return_value=settings
-    ):
+    with patch('client.client_factory.get_alpaca_trading_settings', return_value=settings):
         with pytest.raises(ValueError):
             get_alpaca_trading_client()
 
@@ -47,10 +45,8 @@ def test_get_alpaca_trading_client_missing_keys() -> None:
 def test_get_alpaca_data_client_success() -> None:
     settings = make_settings('key', 'secret', 'https://data.example.com')
     with (
-        patch(
-            'trading_bot_mvp.client.client_factory.get_alpaca_data_settings', return_value=settings
-        ),
-        patch('trading_bot_mvp.client.client_factory.AlpacaDataClient') as MockClient,
+        patch('client.client_factory.get_alpaca_data_settings', return_value=settings),
+        patch('client.client_factory.AlpacaDataClient') as MockClient,
     ):
         _ = get_alpaca_data_client()
         assert MockClient.called
@@ -63,8 +59,6 @@ def test_get_alpaca_data_client_success() -> None:
 
 def test_get_alpaca_data_client_missing_keys() -> None:
     settings = make_settings(None, None, 'https://data.example.com')
-    with patch(
-        'trading_bot_mvp.client.client_factory.get_alpaca_data_settings', return_value=settings
-    ):
+    with patch('client.client_factory.get_alpaca_data_settings', return_value=settings):
         with pytest.raises(ValueError):
             get_alpaca_data_client()

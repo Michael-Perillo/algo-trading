@@ -3,12 +3,12 @@ from unittest.mock import MagicMock
 import pytest
 from pandera.typing.pandas import DataFrame
 
-from trading_bot_mvp.service.brokerage.base_brokerage_service import BaseBrokerageService
-from trading_bot_mvp.service.data.bars_column_models import BarsSchema
-from trading_bot_mvp.service.data.base_dao import BaseDAO
-from trading_bot_mvp.shared.model import OrderRequest
-from trading_bot_mvp.strategy.base_strategy import BaseStrategy, Signal
-from trading_bot_mvp.thesis.trading_thesis import RiskManagement, TradingThesis
+from service.brokerage.base_brokerage_service import BaseBrokerageService
+from service.data.bars_column_models import BarsSchema
+from service.data.base_dao import BaseDAO
+from shared.model import OrderRequest
+from strategy.base_strategy import BaseStrategy, Signal
+from thesis.trading_thesis import RiskManagement, TradingThesis
 
 
 class DummyStrategy_BUY(BaseStrategy):

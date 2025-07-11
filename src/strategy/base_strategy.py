@@ -4,7 +4,7 @@ from enum import Enum
 from pandera.typing.pandas import DataFrame
 from pydantic import BaseModel
 
-from trading_bot_mvp.service.data.bars_column_models import BarsSchema
+from service.data.bars_column_models import BarsSchema
 
 
 class Signal(Enum):
@@ -23,6 +23,8 @@ class BaseStrategy(ABC, BaseModel):
     It's a Pydantic BaseModel to allow for easy parameter validation.
     """
 
+    model_config = {'arbitrary_types_allowed': True}
+
     strategy_name: str
 
     @abstractmethod
@@ -39,6 +41,3 @@ class BaseStrategy(ABC, BaseModel):
             The index of the returned DataFrame should match the input 'bars' DataFrame.
         """
         pass
-
-    class Config:
-        arbitrary_types_allowed = True

@@ -1,8 +1,8 @@
 from pydantic import BaseModel
 
-from ..service.brokerage.base_brokerage_service import BaseBrokerageService
-from ..service.data.base_dao import BaseDAO
-from ..shared.model import (
+from service.brokerage.base_brokerage_service import BaseBrokerageService
+from service.data.base_dao import BaseDAO
+from shared.model import (
     BarRequest,
     OrderClass,
     OrderRequest,
@@ -11,7 +11,7 @@ from ..shared.model import (
     Timeframe,
     TimeInForce,
 )
-from ..strategy.base_strategy import BaseStrategy, Signal
+from strategy.base_strategy import BaseStrategy, Signal
 
 
 class RiskManagement(BaseModel):
@@ -27,6 +27,8 @@ class TradingThesis(BaseModel):
     risk_management: RiskManagement
     data_dao: BaseDAO  # Injected DAO for data access
     brokerage_service: BaseBrokerageService  # Injected brokerage service for account/positions
+
+    model_config = {'arbitrary_types_allowed': True}
 
     def generate_order(self) -> list[OrderRequest]:
         """
@@ -54,6 +56,8 @@ class TradingThesis(BaseModel):
             current_position = positions.get(asset)
 
             # --- Position Sizing Logic ---
+            # todo: Implement position sizing taking into account: allocation, volatility, etc.
+            # todo: Position sizing services should be injected into the thesis
             if latest_signal == Signal.BUY and not current_position:
                 trade_risk_capital = (
                     float(account_info.cash) * self.risk_management.risk_per_trade_percentage
@@ -108,6 +112,3 @@ class TradingThesis(BaseModel):
                 )
 
         return orders
-
-    class Config:
-        arbitrary_types_allowed = True

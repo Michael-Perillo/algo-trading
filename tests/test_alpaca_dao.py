@@ -3,8 +3,8 @@ from unittest.mock import MagicMock, patch
 import pandas as pd
 import pytest
 
-from trading_bot_mvp.service.data.alpaca.alpaca_dao import AlpacaDAO
-from trading_bot_mvp.shared.model import BarRequest, Timeframe
+from service.data.alpaca.alpaca_dao import AlpacaDAO
+from shared.model import BarRequest, Timeframe
 
 
 @pytest.fixture
@@ -32,9 +32,7 @@ def test_get_bars_returns_dataframe(alpaca_dao: AlpacaDAO) -> None:
     request = BarRequest(symbol='AAPL', timeframe=Timeframe.field_1D, start=None, end=None)
     bars_response = make_bars_response()
     # Patch at the location where stock_bars.sync is imported/used in AlpacaDAO
-    with patch(
-        'trading_bot_mvp.service.data.alpaca.alpaca_dao.get_stock_bars', autospec=True
-    ) as mock_stock_bars:
+    with patch('service.data.alpaca.alpaca_dao.get_stock_bars', autospec=True) as mock_stock_bars:
         mock_stock_bars.return_value = bars_response
         df = alpaca_dao.get_bars(request)
         assert isinstance(df, pd.DataFrame)
@@ -47,6 +45,6 @@ def test_get_bars_returns_dataframe(alpaca_dao: AlpacaDAO) -> None:
 
 def test_get_bars_raises_on_none_response(alpaca_dao: AlpacaDAO) -> None:
     request = BarRequest(symbol='AAPL', timeframe=Timeframe.field_1D, start=None, end=None)
-    with patch('trading_bot_mvp.service.data.alpaca.alpaca_dao.get_stock_bars', return_value=None):
+    with patch('service.data.alpaca.alpaca_dao.get_stock_bars', return_value=None):
         with pytest.raises(ValueError, match='Failed to fetch bars from Alpaca'):
             alpaca_dao.get_bars(request)

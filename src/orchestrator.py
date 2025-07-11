@@ -1,8 +1,8 @@
 import time
 
-from .service.brokerage.base_brokerage_service import BaseBrokerageService
-from .service.data.base_dao import BaseDAO
-from .thesis.trading_thesis import TradingThesis
+from service.brokerage.base_brokerage_service import BaseBrokerageService
+from service.data.base_dao import BaseDAO
+from thesis.trading_thesis import TradingThesis
 
 
 class Orchestrator:

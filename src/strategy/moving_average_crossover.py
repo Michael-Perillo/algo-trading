@@ -1,7 +1,7 @@
 import pandas as pd
 from pandera.typing.pandas import DataFrame
 
-from trading_bot_mvp.service.data.bars_column_models import BarsSchema
+from service.data.bars_column_models import BarsSchema
 
 from .base_strategy import BaseStrategy, Signal
 

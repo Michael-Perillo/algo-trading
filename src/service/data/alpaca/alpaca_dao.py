@@ -3,21 +3,21 @@ from typing import Any
 import pandas as pd
 from pandera.typing.pandas import DataFrame
 
-from trading_bot_mvp.client.alpaca.adapters import alpaca_bars_column_mapping
-from trading_bot_mvp.client.alpaca.generated.alpaca_data.api.stock.stock_bars import (
+from client.alpaca.adapters import alpaca_bars_column_mapping
+from client.alpaca.generated.alpaca_data.api.stock.stock_bars import (
     sync as get_stock_bars,
 )
-from trading_bot_mvp.client.alpaca.generated.alpaca_data.client import (
+from client.alpaca.generated.alpaca_data.client import (
     Client as AlpacaDataClient,
 )
-from trading_bot_mvp.client.alpaca.generated.alpaca_data.models.stock_bars_resp import (
+from client.alpaca.generated.alpaca_data.models.stock_bars_resp import (
     StockBarsResp,
 )
-from trading_bot_mvp.client.alpaca.generated.alpaca_data.types import UNSET
-from trading_bot_mvp.client.client_factory import get_alpaca_data_client
-from trading_bot_mvp.service.data.bars_column_models import BarsSchema
-from trading_bot_mvp.service.data.base_dao import BaseDAO
-from trading_bot_mvp.shared.model import BarRequest
+from client.alpaca.generated.alpaca_data.types import UNSET
+from client.client_factory import get_alpaca_data_client
+from service.data.bars_column_models import BarsSchema
+from service.data.base_dao import BaseDAO
+from shared.model import BarRequest
 
 
 class AlpacaDAO(BaseDAO):

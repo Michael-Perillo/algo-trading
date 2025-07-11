@@ -11,8 +11,7 @@ readme = "README.md"
 license = {text = "MIT"}
 
 [project.packages]
-include = ["trading_bot_mvp"]
-from = "src"
+include = ["src"]
 
 [tool.mypy]
 python_version = "3.13"
@@ -20,21 +19,22 @@ plugins = ["pandera.mypy"]
 # enable strict mode
 strict = true
 exclude = [
-    "src/trading_bot_mvp/shared/model",
-    "src/trading_bot_mvp/client/alpaca/generated/.*",
+    "src/shared/model",
+    "src/client/alpaca/generated/.*",
 ]
 mypy_path = "src"
+explicit_package_bases = true
 
 [[tool.mypy.overrides]]
 module = [
-    "trading_bot_mvp.client.alpaca.generated.*",
+    "client.alpaca.generated.*",
 ]
 follow_imports = "skip"
 
 [tool.ruff]
 line-length = 100
 exclude = [
-    "src/trading_bot_mvp/client/alpaca/generated",
+    "src/client/alpaca/generated",
 ]
 
 [tool.ruff.lint]
@@ -65,9 +65,9 @@ pythonpath = ["src"]
 distribution = false
 
 [tool.pdm.scripts]
-start = { cmd = "python src/trading_bot_mvp/main.py", env = { PYTHONPATH = "src" } }
+start = { cmd = "python src/main.py", env = { PYTHONPATH = "src" } }
 test = "pytest"
-coverage = "pytest --cov=src/trading_bot_mvp --cov-report=term-missing --cov-report=lcov --cov-report=json --cov-fail-under=80" # Target the source code for coverage
+coverage = "pytest --cov=src --cov-report=term-missing --cov-report=lcov --cov-report=json --cov-fail-under=80" # Target the source code for coverage
 # Lints both the source and test directories, with auto-fix enabled
 lint = "ruff check src tests --fix"
 # Formats both the source and test directories
@@ -79,8 +79,8 @@ generate_clients = "./scripts/generate_clients.sh"
 
 [tool.coverage.run]
 omit = [
-    "src/trading_bot_mvp/client/alpaca/generated/*", # Exclude generated files from coverage
-    "src/trading_bot_mvp/main.py", # Exclude main.py from coverage (essentially a script)
+    "src/client/alpaca/generated/*", # Exclude generated files from coverage
+    "src/main.py", # Exclude main.py from coverage (essentially a script)
 ]
 
 [dependency-groups]
@@ -99,7 +99,7 @@ dev = [
 ]
 
 [tool.ruff.lint.per-file-ignores]
-"src/trading_bot_mvp/service/data/bars_column_models.py" = ["E501"]
-"src/trading_bot_mvp/shared/model.py" = ["E501", "E741"]
-"src/trading_bot_mvp/client/alpaca/trading_models.py" = ["E501", "UP045"]
-"src/trading_bot_mvp/client/alpaca/data_models.py" = ["E501", "UP045", "E741"]
+"src/service/data/bars_column_models.py" = ["E501"]
+"src/shared/model.py" = ["E501", "E741"]
+"src/client/alpaca/trading_models.py" = ["E501", "UP045"]
+"src/client/alpaca/data_models.py" = ["E501", "UP045", "E741"]

@@ -1,19 +1,19 @@
-import trading_bot_mvp.client.alpaca.adapters as alpaca_adapters
-from trading_bot_mvp.client.alpaca.generated.alpaca_trading.api.accounts.get_account import (
+import client.alpaca.adapters as alpaca_adapters
+from client.alpaca.generated.alpaca_trading.api.accounts.get_account import (
     sync as get_account,
 )
-from trading_bot_mvp.client.alpaca.generated.alpaca_trading.api.positions.get_all_open_positions import (  # noqa: E501
+from client.alpaca.generated.alpaca_trading.api.positions.get_all_open_positions import (  # noqa: E501
     sync as get_all_open_positions,
 )
-from trading_bot_mvp.client.alpaca.generated.alpaca_trading.api.positions.get_open_position import (
+from client.alpaca.generated.alpaca_trading.api.positions.get_open_position import (
     sync as get_open_position,
 )
-from trading_bot_mvp.client.alpaca.generated.alpaca_trading.client import (
+from client.alpaca.generated.alpaca_trading.client import (
     Client as AlpacaAPIClient,
 )
-from trading_bot_mvp.client.client_factory import get_alpaca_trading_client
-from trading_bot_mvp.service.brokerage.base_brokerage_service import BaseBrokerageService
-from trading_bot_mvp.shared.model import Account, OrderRequest, OrderResponse, Position
+from client.client_factory import get_alpaca_trading_client
+from service.brokerage.base_brokerage_service import BaseBrokerageService
+from shared.model import Account, OrderRequest, OrderResponse, Position
 
 
 class AlpacaBrokerageService(BaseBrokerageService):

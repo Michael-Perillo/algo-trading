@@ -3,15 +3,15 @@ from typing import Any, TypeVar
 
 from pandas import to_datetime
 
-from trading_bot_mvp.client.alpaca.generated.alpaca_trading.models.account import (
+from client.alpaca.generated.alpaca_trading.models.account import (
     Account as AlpacaAccountResponse,
 )
-from trading_bot_mvp.client.alpaca.generated.alpaca_trading.models.position import (
+from client.alpaca.generated.alpaca_trading.models.position import (
     Position as AlpacaPosition,
 )
-from trading_bot_mvp.client.alpaca.generated.alpaca_trading.types import UNSET
-from trading_bot_mvp.service.data.bars_column_models import BarsColumnMapping
-from trading_bot_mvp.shared.model import Account, Position, Side
+from client.alpaca.generated.alpaca_trading.types import UNSET
+from service.data.bars_column_models import BarsColumnMapping
+from shared.model import Account, Position, Side
 
 T = TypeVar('T')
 

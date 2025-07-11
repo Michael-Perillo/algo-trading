@@ -166,4 +166,4 @@ cython_debug/
 #.idea/
 
 # Generated files
-src/trading_bot_mvp/client/alpaca/generated/
+src/client/alpaca/generated/
