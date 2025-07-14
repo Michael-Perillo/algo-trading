@@ -1,4 +1,4 @@
-from datetime import date
+import datetime as dt
 
 from pandera.typing.pandas import DataFrame
 
@@ -7,6 +7,7 @@ from portfolio.allocation.default_allocator import DefaultAllocator
 from portfolio.risk.base_risk import BaseRisk
 from portfolio.risk.default_risk import DefaultRisk
 from service.brokerage.base_brokerage_service import BaseBrokerageService
+from service.data.alpaca.alpaca_dao import AlpacaDAO
 from service.data.bars_column_models import BarsSchema
 from service.data.base_dao import BaseDAO
 from shared.model import (
@@ -27,12 +28,16 @@ from thesis.base_thesis import BaseThesis
 
 class SMACrossoverThesis(BaseThesis):
     thesis_name: str = 'SMA Crossover Thesis'
-    asset_universe: list[str] = ['AAPL', 'MSFT', 'GOOGL']  # Example asset universe
-    strategy: BaseStrategy = MovingAverageCrossover(short_window=20, long_window=50)
+    asset_universe: list[str] = ['AAPL']  # Example asset universe
+    # At one minute granularity, we use the 1 day and 5 day moving averages
+    # So, the short window is 60*8 = 480 minutes (8 hours of trading)
+    # and the long window is that times 5, so 2400 minutes (5 days of trading)
+    strategy: BaseStrategy = MovingAverageCrossover(short_window=480, long_window=2400)
     risk_management: BaseRisk = DefaultRisk()
     allocator: BaseAllocator = DefaultAllocator()
-    data_dao: BaseDAO  # Injected DAO for data access
+    data_dao: BaseDAO = AlpacaDAO()  # Injected DAO for data access
     brokerage_service: BaseBrokerageService  # Injected brokerage service for account/positions
+    start_timestamp: dt.datetime
 
     model_config = {'arbitrary_types_allowed': True}
 
@@ -57,7 +62,10 @@ class SMACrossoverThesis(BaseThesis):
         self, asset: str, current_position: Position | None, account: Account
     ) -> OrderRequest | None:
         # todo: need to fetch bars since starting date, not just the latest or save them as we go
-        bars_df = self.fetch_bars(asset)
+        # for now, just fetch the last six months of data plus however long since we started
+        # testing temporarily we'll do 10 days
+        bars_start_date = (self.start_timestamp - dt.timedelta(days=10)).date()
+        bars_df = self.fetch_bars(asset, start=bars_start_date)
         if bars_df is None or bars_df.empty:
             print(f'No bars data for {asset}, skipping.')
             return None
@@ -65,7 +73,7 @@ class SMACrossoverThesis(BaseThesis):
         if latest_signal == Signal.BUY and not current_position:
             allocation = self.allocator.allocate(
                 account=account,
-                latest_price=bars_df.iloc[-1].price,
+                latest_price=bars_df.iloc[-1].close,
                 risk_management=self.risk_management,
             )
             stop_loss_price = None
@@ -108,14 +116,15 @@ class SMACrossoverThesis(BaseThesis):
         return None
 
     def fetch_bars(
-        self, asset: str, start: date | None = None, end: date | None = None
+        self, asset: str, start: dt.date | None = None, end: dt.date | None = None
     ) -> DataFrame[BarsSchema] | None:
         bars_request = BarRequest(
             symbol=asset,
-            timeframe=Timeframe.field_1D,  # Daily bars
-            start=start,  # Use default start time
-            end=end,  # Use default end time
+            timeframe=Timeframe.field_1m,  # minute bars for high frequency
+            start=start,
+            end=end,  # Use default end time (None means current time)
         )
+        print(self.data_dao)
         bars_df = self.data_dao.get_bars(bars_request)
         if bars_df.empty:
             print(f'No data for {asset}, skipping.')

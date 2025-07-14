@@ -6,6 +6,8 @@ from pydantic import BaseModel
 
 from service.data.bars_column_models import BarsSchema
 
+# todo: ability to plot signals?
+
 
 class Signal(Enum):
     """

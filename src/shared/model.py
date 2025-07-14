@@ -133,12 +133,12 @@ class Trade(BaseModel):
 
 
 class Timeframe(Enum):
-    field_1m = '1m'
-    field_5m = '5m'
-    field_15m = '15m'
-    field_30m = '30m'
-    field_1h = '1h'
-    field_4h = '4h'
+    field_1m = '1Min'
+    field_5m = '5Min'
+    field_15m = '15Min'
+    field_30m = '30Min'
+    field_1h = '1H'
+    field_4h = '4H'
     field_1D = '1D'
 
 

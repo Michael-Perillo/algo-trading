@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+from datetime import datetime
 
 from pydantic import BaseModel
 
@@ -23,6 +24,7 @@ class BaseThesis(BaseModel, ABC):
     data_dao: BaseDAO  # Injected DAO for data access
     brokerage_service: BaseBrokerageService  # Injected brokerage service for account/positions
     allocator: BaseAllocator
+    start_timestamp: datetime
 
     model_config = {'arbitrary_types_allowed': True}
 

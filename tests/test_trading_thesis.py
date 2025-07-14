@@ -1,3 +1,4 @@
+import datetime as dt
 from unittest.mock import MagicMock
 
 import pytest
@@ -54,6 +55,7 @@ def trading_thesis_BUY(dummy_brokerage: MagicMock, dummy_dao: MagicMock) -> SMAC
         data_dao=dummy_dao,
         brokerage_service=dummy_brokerage,
         allocator=DefaultAllocator(),
+        start_timestamp=dt.datetime.now(dt.UTC),  # Not used in this dummy thesis
     )
 
 
@@ -78,6 +80,7 @@ def trading_thesis_SELL(dummy_brokerage: MagicMock, dummy_dao: MagicMock) -> SMA
         data_dao=dummy_dao,
         brokerage_service=dummy_brokerage,
         allocator=DefaultAllocator(),
+        start_timestamp=dt.datetime.now(dt.UTC),  # Not used in this dummy thesis
     )
 
 

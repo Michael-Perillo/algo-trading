@@ -1,3 +1,4 @@
+import datetime as dt
 from unittest.mock import MagicMock
 
 import pytest
@@ -22,6 +23,7 @@ class DummyThesis(SMACrossoverThesis):
             data_dao=MagicMock(spec=BaseDAO),
             brokerage_service=MagicMock(spec=BaseBrokerageService),
             allocator=DefaultAllocator(),
+            start_timestamp=dt.datetime.now(dt.UTC),  # Not used in this dummy thesis
         )
         self._orders = orders
 

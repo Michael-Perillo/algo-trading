@@ -48,11 +48,31 @@ class AlpacaDAO(BaseDAO):
             end=request.end if request.end is not None else UNSET,
         )
         if bars_response_body is None:
+            print()
             raise ValueError('Failed to fetch bars from Alpaca. Response body is None.')
 
-        return self.standardize_bars_dataframe(
+        bars = self.standardize_bars_dataframe(
             self.parse_bars_response(bars_response_body), alpaca_bars_column_mapping()
         )
+
+        while bars_response_body.next_page_token is not None:
+            bars_response_body = get_stock_bars(
+                client=self.api_client,
+                symbols=request.symbol,
+                timeframe=request.timeframe.value,
+                start=request.start if request.start is not None else UNSET,
+                end=request.end if request.end is not None else UNSET,
+                page_token=bars_response_body.next_page_token,
+            )
+            if bars_response_body is None:
+                raise ValueError(
+                    'Failed to fetch additional bars from Alpaca. Response body is None.'
+                )
+            additional_bars = self.standardize_bars_dataframe(
+                self.parse_bars_response(bars_response_body), alpaca_bars_column_mapping()
+            )
+            bars = pd.concat([bars, additional_bars], ignore_index=True)  # type: ignore
+        return bars
 
     def parse_bars_response(self, bars_response_body: StockBarsResp) -> DataFrame[Any]:
         bars_dict = bars_response_body.bars.to_dict()

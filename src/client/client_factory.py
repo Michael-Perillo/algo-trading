@@ -1,3 +1,4 @@
+import hishel
 from httpx import Request, Response
 
 from client.alpaca.generated.alpaca_data.client import (
@@ -19,9 +20,15 @@ def log_request(request: Request) -> None:
 def log_response(response: Response) -> None:
     request = response.request
     print(f'Response event hook: {request.method} {request.url} - Status {response.status_code}')
-
-
-httpx_args = {'event_hooks': {'request': [log_request], 'response': [log_response]}}
+    if response.status_code != 200:
+        # Decode bytes to string for printing
+        error_content = response.read()
+        if isinstance(error_content, str):
+            print(f'Error response: {error_content}')
+        elif isinstance(error_content, bytes):
+            print(f'Error response: {error_content.decode(errors="replace")}')
+        else:
+            print(f'Error response: {str(error_content)}')
 
 
 def get_alpaca_trading_client() -> AlpacaTradingClient:
@@ -37,13 +44,18 @@ def get_alpaca_trading_client() -> AlpacaTradingClient:
         raise ValueError(
             'Alpaca API key ID and secret key must be set in the environment variables.'
         )
-    return AlpacaTradingClient(
+    # Use hishel for in-memory caching
+    hishel_client = hishel.CacheClient(
         base_url=AlpacaTradingSettings.APCA_API_BASE_URL,
         headers={
             'APCA-API-KEY-ID': key_id,
             'APCA-API-SECRET-KEY': key_secret,
         },
-        httpx_args=httpx_args,
+        event_hooks={'request': [log_request], 'response': [log_response]},
+        storage=hishel.InMemoryStorage(),
+    )
+    return AlpacaTradingClient(base_url=AlpacaTradingSettings.APCA_API_BASE_URL).set_httpx_client(
+        hishel_client
     )
 
 
@@ -60,11 +72,16 @@ def get_alpaca_data_client() -> AlpacaDataClient:
         raise ValueError(
             'Alpaca API key ID and secret key must be set in the environment variables.'
         )
-    return AlpacaDataClient(
+    # Use hishel.CacheClient for in-memory caching
+    hishel_cache_client = hishel.CacheClient(
+        event_hooks={'request': [log_request], 'response': [log_response]},
         base_url=AlpacaDataSettings.APCA_API_BASE_URL,
         headers={
             'APCA-API-KEY-ID': key_id,
             'APCA-API-SECRET-KEY': key_secret,
         },
-        httpx_args=httpx_args,
+        storage=hishel.InMemoryStorage(),
+    )
+    return AlpacaDataClient(base_url=AlpacaDataSettings.APCA_API_BASE_URL).set_httpx_client(
+        hishel_cache_client
     )

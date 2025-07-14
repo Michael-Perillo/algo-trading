@@ -30,9 +30,6 @@ def test_get_alpaca_trading_client_success() -> None:
         assert MockClient.called
         args, kwargs = MockClient.call_args
         assert kwargs['base_url'] == 'https://trading.example.com'
-        assert kwargs['headers']['APCA-API-KEY-ID'] == 'key'
-        assert kwargs['headers']['APCA-API-SECRET-KEY'] == 'secret'
-        assert 'httpx_args' in kwargs
 
 
 def test_get_alpaca_trading_client_missing_keys() -> None:
@@ -52,9 +49,6 @@ def test_get_alpaca_data_client_success() -> None:
         assert MockClient.called
         args, kwargs = MockClient.call_args
         assert kwargs['base_url'] == 'https://data.example.com'
-        assert kwargs['headers']['APCA-API-KEY-ID'] == 'key'
-        assert kwargs['headers']['APCA-API-SECRET-KEY'] == 'secret'
-        assert 'httpx_args' in kwargs
 
 
 def test_get_alpaca_data_client_missing_keys() -> None:

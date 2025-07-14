@@ -9,7 +9,8 @@ from shared.model import BarRequest, Timeframe
 
 @pytest.fixture
 def alpaca_dao() -> AlpacaDAO:
-    return AlpacaDAO()
+    # Inject a MagicMock to prevent real network calls
+    return AlpacaDAO(api_client=MagicMock())
 
 
 def make_bars_response() -> MagicMock:
@@ -25,6 +26,7 @@ def make_bars_response() -> MagicMock:
     bars = {'AAPL': [bar]}
     bars_resp = MagicMock()
     bars_resp.bars.to_dict.return_value = bars
+    bars_resp.next_page_token = None  # Ensure pagination ends
     return bars_resp
 
 
