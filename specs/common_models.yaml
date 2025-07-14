@@ -264,3 +264,31 @@ components:
         id:
           type: string
           description: Order identifier
+
+    Allocation:
+      type: object
+      description: Allocation details for an order, including sizing and risk management.
+      properties:
+        quantity:
+          type: number
+          description: Quantity to allocate for the order.
+        entry_price:
+          type: number
+          format: float
+          description: Intended entry price for the allocation.
+        stop_loss_price:
+          type: number
+          format: float
+          description: Stop loss price for risk management.
+        take_profit_price:
+          type: number
+          format: float
+          description: Take profit price for the allocation.
+        metadata:
+          type: object
+          description: Arbitrary metadata for the allocation.
+      required:
+        - quantity
+        - entry_price
+        - stop_loss_price
+

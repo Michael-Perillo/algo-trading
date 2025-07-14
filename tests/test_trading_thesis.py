@@ -3,12 +3,14 @@ from unittest.mock import MagicMock
 import pytest
 from pandera.typing.pandas import DataFrame
 
+from portfolio.allocation.default_allocator import DefaultAllocator
+from portfolio.risk.default_risk import DefaultRisk as RiskManagement
 from service.brokerage.base_brokerage_service import BaseBrokerageService
 from service.data.bars_column_models import BarsSchema
 from service.data.base_dao import BaseDAO
 from shared.model import OrderRequest
 from strategy.base_strategy import BaseStrategy, Signal
-from thesis.trading_thesis import RiskManagement, TradingThesis
+from thesis.SMA_thesis import SMACrossoverThesis
 
 
 class DummyStrategy_BUY(BaseStrategy):
@@ -43,19 +45,20 @@ def dummy_dao() -> MagicMock:
 
 
 @pytest.fixture
-def trading_thesis_BUY(dummy_brokerage: MagicMock, dummy_dao: MagicMock) -> TradingThesis:
-    return TradingThesis(
+def trading_thesis_BUY(dummy_brokerage: MagicMock, dummy_dao: MagicMock) -> SMACrossoverThesis:
+    return SMACrossoverThesis(
         thesis_name='Test Thesis',
         asset_universe=['AAPL', 'MSFT'],
         strategy=DummyStrategy_BUY(),
         risk_management=RiskManagement(),
         data_dao=dummy_dao,
         brokerage_service=dummy_brokerage,
+        allocator=DefaultAllocator(),
     )
 
 
 def test_generate_order_calls_dependencies_BUY(
-    trading_thesis_BUY: TradingThesis, dummy_brokerage: MagicMock, dummy_dao: MagicMock
+    trading_thesis_BUY: SMACrossoverThesis, dummy_brokerage: MagicMock, dummy_dao: MagicMock
 ) -> None:
     orders = trading_thesis_BUY.generate_order()
     assert isinstance(orders, list)
@@ -66,19 +69,20 @@ def test_generate_order_calls_dependencies_BUY(
 
 
 @pytest.fixture
-def trading_thesis_SELL(dummy_brokerage: MagicMock, dummy_dao: MagicMock) -> TradingThesis:
-    return TradingThesis(
+def trading_thesis_SELL(dummy_brokerage: MagicMock, dummy_dao: MagicMock) -> SMACrossoverThesis:
+    return SMACrossoverThesis(
         thesis_name='Test Thesis',
         asset_universe=['AAPL', 'MSFT'],
         strategy=DummyStrategy_SELL(),
         risk_management=RiskManagement(),
         data_dao=dummy_dao,
         brokerage_service=dummy_brokerage,
+        allocator=DefaultAllocator(),
     )
 
 
 def test_generate_order_calls_dependencies_SELL(
-    trading_thesis_SELL: TradingThesis, dummy_brokerage: MagicMock, dummy_dao: MagicMock
+    trading_thesis_SELL: SMACrossoverThesis, dummy_brokerage: MagicMock, dummy_dao: MagicMock
 ) -> None:
     orders = trading_thesis_SELL.generate_order()
     assert isinstance(orders, list)
@@ -88,7 +92,7 @@ def test_generate_order_calls_dependencies_SELL(
     assert dummy_dao.get_bars.call_count == len(trading_thesis_SELL.asset_universe)
 
 
-def test_generate_order_handles_no_assets(trading_thesis_BUY: TradingThesis) -> None:
+def test_generate_order_handles_no_assets(trading_thesis_BUY: SMACrossoverThesis) -> None:
     trading_thesis_BUY.asset_universe = []
     orders = trading_thesis_BUY.generate_order()
     assert orders == []

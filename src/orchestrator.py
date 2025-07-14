@@ -2,13 +2,13 @@ import time
 
 from service.brokerage.base_brokerage_service import BaseBrokerageService
 from service.data.base_dao import BaseDAO
-from thesis.trading_thesis import TradingThesis
+from thesis.base_thesis import BaseThesis
 
 
 class Orchestrator:
     def __init__(
         self,
-        theses: list[TradingThesis],
+        theses: list[BaseThesis],
         brokerage_service: BaseBrokerageService,
         data_dao: BaseDAO,
     ):

@@ -74,7 +74,7 @@ lint = "ruff check src tests --fix"
 format = "ruff format src tests"
 # Type checks both the source and test directories
 typecheck = "mypy src tests"
-generate_models = "./scripts/generate_alpaca_models.sh"
+generate_models = "./scripts/generate_shared_models.sh"
 generate_clients = "./scripts/generate_clients.sh"
 
 [tool.coverage.run]

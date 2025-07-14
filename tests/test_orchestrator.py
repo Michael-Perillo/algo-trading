@@ -3,14 +3,16 @@ from unittest.mock import MagicMock
 import pytest
 
 from orchestrator import Orchestrator
+from portfolio.allocation.default_allocator import DefaultAllocator
+from portfolio.risk.default_risk import DefaultRisk as RiskManagement
 from service.brokerage.base_brokerage_service import BaseBrokerageService
 from service.data.base_dao import BaseDAO
 from shared.model import OrderRequest
 from strategy.base_strategy import BaseStrategy
-from thesis.trading_thesis import RiskManagement, TradingThesis
+from thesis.SMA_thesis import SMACrossoverThesis
 
 
-class DummyThesis(TradingThesis):
+class DummyThesis(SMACrossoverThesis):
     def __init__(self, name: str, orders: list[OrderRequest]) -> None:
         super().__init__(
             thesis_name=name,
@@ -19,6 +21,7 @@ class DummyThesis(TradingThesis):
             risk_management=MagicMock(spec=RiskManagement),
             data_dao=MagicMock(spec=BaseDAO),
             brokerage_service=MagicMock(spec=BaseBrokerageService),
+            allocator=DefaultAllocator(),
         )
         self._orders = orders
 
