@@ -1,20 +1,15 @@
 import time
 
+from orchestrator.base_orchestrator import BaseOrchestrator
 from service.brokerage.base_brokerage_service import BaseBrokerageService
 from service.data.base_dao import BaseDAO
 from thesis.base_thesis import BaseThesis
 
 
-class Orchestrator:
-    def __init__(
-        self,
-        theses: list[BaseThesis],
-        brokerage_service: BaseBrokerageService,
-        data_dao: BaseDAO,
-    ):
-        self.theses = theses
-        self.brokerage_service = brokerage_service
-        self.data_dao = data_dao
+class DefaultOrchestrator(BaseOrchestrator):
+    theses: list[BaseThesis]
+    brokerage_service: BaseBrokerageService
+    data_dao: BaseDAO
 
     def run(self, interval_seconds: int = 60) -> None:
         """

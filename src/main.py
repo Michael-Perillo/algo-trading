@@ -1,7 +1,7 @@
 import datetime as dt
 import logging
 
-from orchestrator import Orchestrator
+from orchestrator.default_orchestrator import DefaultOrchestrator
 from service.brokerage.alpaca.alpaca_brokerage_service import (
     AlpacaBrokerageService,
 )
@@ -29,7 +29,7 @@ def run_orchestrator() -> None:
     )
 
     # Create the orchestrator
-    orchestrator = Orchestrator(
+    orchestrator = DefaultOrchestrator(
         theses=[thesis],
         brokerage_service=brokerage_service,
         data_dao=alpaca_dao,

@@ -3,7 +3,7 @@ from unittest.mock import MagicMock
 
 import pytest
 
-from orchestrator import Orchestrator
+from orchestrator.default_orchestrator import DefaultOrchestrator as Orchestrator
 from portfolio.allocation.default_allocator import DefaultAllocator
 from portfolio.risk.default_risk import DefaultRisk as RiskManagement
 from service.brokerage.base_brokerage_service import BaseBrokerageService
@@ -51,7 +51,9 @@ def test_orchestrator_calls_thesis_and_prints(
     order1.symbol = 'AAPL'
     order1.dict.return_value = {'symbol': 'AAPL', 'side': 'buy'}
     thesis = DummyThesis('TestThesis', [order1])
-    orchestrator = Orchestrator([thesis], dummy_brokerage, dummy_dao)
+    orchestrator = Orchestrator(
+        theses=[thesis], brokerage_service=dummy_brokerage, data_dao=dummy_dao
+    )
     # Patch time.sleep to break after one loop
     monkeypatch.setattr('time.sleep', lambda x: (_ for _ in ()).throw(KeyboardInterrupt()))
     # Patch the infinite loop to break after one iteration
@@ -76,7 +78,9 @@ def test_orchestrator_handles_multiple_theses(
     order2.dict.return_value = {'symbol': 'MSFT', 'side': 'sell'}
     thesis1 = DummyThesis('Thesis1', [order1])
     thesis2 = DummyThesis('Thesis2', [order2])
-    orchestrator = Orchestrator([thesis1, thesis2], dummy_brokerage, dummy_dao)
+    orchestrator = Orchestrator(
+        theses=[thesis1, thesis2], brokerage_service=dummy_brokerage, data_dao=dummy_dao
+    )
     monkeypatch.setattr('time.sleep', lambda x: (_ for _ in ()).throw(KeyboardInterrupt()))
     with pytest.raises(KeyboardInterrupt):
         orchestrator.run(interval_seconds=0)
