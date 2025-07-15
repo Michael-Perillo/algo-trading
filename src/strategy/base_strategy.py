@@ -5,6 +5,7 @@ from pandera.typing.pandas import DataFrame
 from pydantic import BaseModel
 
 from service.data.bars_column_models import BarsSchema
+from utlis.plotting.base_strategy_plotter import BaseStrategyPlotter
 
 # todo: ability to plot signals?
 
@@ -28,6 +29,7 @@ class BaseStrategy(ABC, BaseModel):
     model_config = {'arbitrary_types_allowed': True}
 
     strategy_name: str
+    plotter: BaseStrategyPlotter | None = None
 
     @abstractmethod
     def generate_signal(self, bars: DataFrame[BarsSchema]) -> Signal:
